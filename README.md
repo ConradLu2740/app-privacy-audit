@@ -48,24 +48,69 @@
 
 ## 方法（三线证据模型）
 
-```text
-                    ┌─────────────┐
-                    │  锁定样本    │  包名 / 版本 / SHA-256
-                    └──────┬──────┘
-           ┌───────────────┼───────────────┐
-           ▼               ▼               ▼
-    ┌────────────┐  ┌────────────┐  ┌────────────┐
-    │ 静态 Jadx  │  │ 动态 Frida │  │ 流量 代理  │
-    │ 权限/API/SDK│  │ 运行时调用 │  │ 明文/域名  │
-    └─────┬──────┘  └─────┬──────┘  └─────┬──────┘
-          │  假设 H-xx    │  证据 E-xx    │
-          └───────────────┼───────────────┘
-                          ▼
-                 ┌─────────────────┐
-                 │ 政策 ↔ 行为对照  │  C-xx × E-xx
-                 └────────┬────────┘
-                          ▼
-                 风险分级 + 修复建议 + 局限
+### 架构总览
+
+```mermaid
+flowchart TB
+  subgraph Input["样本与环境"]
+    APK["APK / 包名 / SHA-256"]
+    EMU["模拟器或真机<br/>Android 9–11"]
+    FR["Frida 17.x<br/>client + server 同版本"]
+  end
+
+  subgraph Lines["三条证据线"]
+    ST["静态 Static<br/>Jadx · aapt · Manifest"]
+    DY["动态 Dynamic<br/>Frida Hook"]
+    TF["流量 Traffic<br/>mitmproxy / PCAPdroid"]
+  end
+
+  subgraph Out["产出"]
+    H["假设 H-xx"]
+    E["证据 E-xx-sta/dyn/trf"]
+    C["政策条款 C-xx"]
+    R["对照 R-xx<br/>一致 / 不一致 / 受阻"]
+    FIX["风险分级 + 修复建议"]
+  end
+
+  APK --> ST
+  EMU --> DY
+  FR --> DY
+  ST --> H
+  H --> DY
+  DY --> E
+  TF --> E
+  ST --> E
+  C --> R
+  E --> R
+  R --> FIX
+```
+
+### 标准分析流程
+
+```mermaid
+flowchart LR
+  A["锁定样本"] --> B["静态扫描<br/>S-*"]
+  B --> C["假设 H-xx"]
+  C --> D{"动态注入"}
+  D -->|成功| E["验证 D-*<br/>写 E-dyn"]
+  D -->|受阻| F["记录 ABI/壳/反注入<br/>禁止用静态冒充"]
+  E --> G["流量 T-*<br/>可选"]
+  F --> G
+  G --> H["政策 C-xx"]
+  H --> I["三列对照 R-xx"]
+  I --> J["报告 00–06"]
+```
+
+### 证据交叉验证
+
+```mermaid
+flowchart TD
+  S["静态命中"] --> Q{"动态是否观测到？"}
+  Q -->|是| T{"流量是否对齐？"}
+  Q -->|否| U["记「未观测到」<br/>或路径未触发"]
+  T -->|是| V["最高置信<br/>优先写入报告"]
+  T -->|否/未测| W["中等置信<br/>写清局限"]
+  U --> X["不可单独定「违规」"]
 ```
 
 **关键约定**
@@ -104,6 +149,28 @@ APK **不会**进仓库，请自行从官方渠道下载。
 | A1 墨迹 | 完成 | **受阻**（仅 ARM + 爱加密壳在 x86_64 AVD 崩溃） | 未做 | 权限/SDK 面很大，运行时无法在本环境证实 |
 | A2 豆瓣 | 完成 | **受阻**（疑似反 Frida，attach 后进程死） | 未做 | 有自研 deviceId 与较多剪贴板代码，需更弱对抗环境 |
 | A3 NewPipe | 完成 | **完成** | **完成** | 权限极少；30s 剧本内未观测到标识符/定位；与政策一致 |
+
+样本推进状态：
+
+```mermaid
+stateDiagram-v2
+  [*] --> Locked
+  Locked --> StaticDone
+  StaticDone --> DynamicOK: ABI兼容且可注入
+  StaticDone --> DynBlocked: 仅ARM/壳/反注入
+  DynamicOK --> PolicyDone
+  DynBlocked --> WaitingEnv: 真机或ARM镜像
+  PolicyDone --> [*]
+  WaitingEnv --> [*]
+
+  note right of DynBlocked
+    A1 仅ARM+爱加密
+    A2 疑似反Frida
+  end note
+  note right of PolicyDone
+    A3 NewPipe 已闭环
+  end note
+```
 
 **A3 动态剧本（可复现）**
 
