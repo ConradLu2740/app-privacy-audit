@@ -1,0 +1,36 @@
+# Build / IDE
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Never commit real samples or raw captures
+*.apk
+*.aab
+*.xapk
+*.apks
+pcap/
+*.pcap
+*.pcapng
+*.cap
+
+# Unredacted evidence (keep only curated/redacted files under evidence/)
+evidence/**/raw/
+evidence/**/*.orig
+secrets.env
+*.keystore
+*.jks
+
+# Local tool dumps
+frida-server*
+objection-output/
+*.log
+!docs/**/*.log
