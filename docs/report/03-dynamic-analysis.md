@@ -55,13 +55,17 @@
 
 ---
 
-## 对照：练手样本动态链路可用
+## 对照：动态链路在 A3 上可用
 
 | 包名 | 结果 |
 |------|------|
-| `com.simplemobiletools.calculator` | Frida spawn + `all_hooks.js` **安装成功**（证明工具链正常） |
+| `org.schabi.newpipe` (A3) | **成功**：attach 后 hooks 安装、进程存活；窗口内无 IMEI/定位命中 |
+| `de.danoeh.antennapod` | **成功**：同样可注入存活（备用对照） |
+| `com.simplemobiletools.calculator` | 成功（早期工具链冒烟） |
 
-说明：本环境 **Frida 工具链可用**；受阻来自样本自身（ABI/壳/反注入），非脚本错误。
+**A3 证据：** [../../evidence/org.schabi.newpipe/dynamic/E-A3-dyn-01.md](../../evidence/org.schabi.newpipe/dynamic/E-A3-dyn-01.md)
+
+说明：本环境 **Frida 工具链可用**；A1/A2 受阻来自样本自身（ABI/壳/反注入），非脚本错误。
 
 ---
 
