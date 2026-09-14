@@ -87,14 +87,15 @@ Get-FileHash .\sample.apk -Algorithm SHA256
 adb install -r .\sample.apk
 ```
 
-### 当前实验室已装（仅练手）
+### 当前实验室已装
 
-| 包名 | 来源 | 用途 |
-|------|------|------|
-| `com.simplemobiletools.calculator` | F-Droid | Frida 冒烟（已通过） |
-| `org.fdroid.fdroid` | F-Droid | 可选商店 |
+| 包名 | 版本 | 来源 | 用途 |
+|------|------|------|------|
+| `com.moji.mjweather` | 9.0942.02 | 官网 CDN | **正式样本 A1** |
+| `com.douban.frodo` | 7.133.0 | 官网下载 | **正式样本 A2** |
+| `com.simplemobiletools.calculator` | — | F-Droid | Frida 冒烟（已通过） |
 
-正式样本 A1 墨迹天气 / A2 豆瓣：**APK 未下载**（商店页无直链，需你从手机商店或官方渠道获取后放入 `apks\`）。
+正式样本哈希与渠道见 [report/01-samples.md](report/01-samples.md)。
 
 ## 7. 数据与脱敏
 
