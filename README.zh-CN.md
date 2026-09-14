@@ -293,6 +293,7 @@ frida -U -p <上面的pid> -l scripts/frida/all_hooks.js
 app-privacy-audit/
 ├── README.md                 ← 英文（GitHub 默认）
 ├── README.zh-CN.md           ← 中文
+├── HANDOFF.md                ← 项目现状与续作说明
 ├── LICENSE
 ├── docs/
 │   ├── methodology.md        # 三线方法与假设驱动

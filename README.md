@@ -292,6 +292,7 @@ Paths may differ on your machine. Success criterion: **Frida lists processes, A3
 app-privacy-audit/
 ├── README.md                 ← English (GitHub default)
 ├── README.zh-CN.md           ← Chinese
+├── HANDOFF.md                ← status & how to resume
 ├── LICENSE
 ├── docs/
 │   ├── methodology.md
