@@ -39,11 +39,11 @@
 
 | ID | 应用 | 包名 | 版本 | 渠道 | 状态 |
 |----|------|------|------|------|------|
-| A1 | （待锁定） | | | 应用商店 | Week 1 |
-| A2 | （待锁定） | | | 应用商店 | Week 1 |
-| A3 | （可选） | | | 应用商店 | Week 1 |
+| A1 | 墨迹天气（候选） | `com.moji.mjweather` 待核验 | | 应用商店 | 未锁定 |
+| A2 | 豆瓣（候选） | `com.douban.frodo` 待核验 | | 应用商店 | 未锁定 |
+| A3 | 生活类（可后置） | 待定 | | 应用商店 | 未锁定 |
 
-选样标准见 [docs/report/01-samples.md](docs/report/01-samples.md)。
+候选依据与锁定检查见 [docs/sample-candidates.md](docs/sample-candidates.md)。
 
 ## 结果摘要
 
