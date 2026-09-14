@@ -1,8 +1,6 @@
-/**
- * all_hooks.js — 合并注入（摸底用，日志噪声大）
- * 等价于依次加载各分脚本的逻辑。
- *
- * frida -U -f <pkg> -l scripts/frida/all_hooks.js --no-pause
+﻿/**
+ * all_hooks.js 鈥?鍚堝苟娉ㄥ叆锛堟懜搴曠敤锛屾棩蹇楀櫔澹板ぇ锛? * 绛変环浜庝緷娆″姞杞藉悇鍒嗚剼鏈殑閫昏緫銆? *
+ * frida -U -f <pkg> -l scripts/frida/all_hooks.js
  */
 'use strict';
 
@@ -188,10 +186,12 @@ Java.perform(function () {
   // --- audio ---
   try {
     const AR = Java.use('android.media.AudioRecord');
-    AR.startRecording.implementation = function () {
-      log('media', 'AudioRecord.startRecording()');
-      return this.startRecording();
-    };
+    AR.startRecording.overloads.forEach(function (ov) {
+      ov.implementation = function () {
+        log('media', 'AudioRecord.startRecording()');
+        return ov.apply(this, arguments);
+      };
+    });
   } catch (e) {
     log('media', e);
   }

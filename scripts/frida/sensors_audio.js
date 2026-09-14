@@ -43,11 +43,13 @@ Java.perform(function () {
 
   try {
     const AR = Java.use('android.media.AudioRecord');
-    AR.startRecording.implementation = function () {
-      log('AudioRecord.startRecording()');
-      log('  stack: ' + stackBrief());
-      return this.startRecording();
-    };
+    AR.startRecording.overloads.forEach(function (ov) {
+      ov.implementation = function () {
+        log('AudioRecord.startRecording()');
+        log('  stack: ' + stackBrief());
+        return ov.apply(this, arguments);
+      };
+    });
     log('hooked AudioRecord');
   } catch (e) {
     log('skip AudioRecord: ' + e);

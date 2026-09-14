@@ -1,50 +1,45 @@
-# Frida Hook 脚本
+﻿# Frida Hook 鑴氭湰
 
-最小可复现脚本集，按敏感点拆分。先跑单点，再上 `all_hooks.js`。
+鏈€灏忓彲澶嶇幇鑴氭湰闆嗭紝鎸夋晱鎰熺偣鎷嗗垎銆傚厛璺戝崟鐐癸紝鍐嶄笂 `all_hooks.js`銆?
+## 鍓嶇疆
 
-## 前置
+- `frida` 瀹㈡埛绔笌璁惧绔?`frida-server` **鐗堟湰涓€鑷?*
+- 宸?`adb devices` 鑳界湅鍒扮洰鏍?- 鍖呭悕鑷鏇挎崲
 
-- `frida` 客户端与设备端 `frida-server` **版本一致**
-- 已 `adb devices` 能看到目标
-- 包名自行替换
-
-## 用法
+## 鐢ㄦ硶
 
 ```bash
-# 冷启动并注入
-frida -U -f com.example.app -l scripts/frida/device_id.js --no-pause
+# 鍐峰惎鍔ㄥ苟娉ㄥ叆
+frida -U -f com.example.app -l scripts/frida/device_id.js
 
-# App 已启动时附加
-frida -U -n "示例应用" -l scripts/frida/location.js
+# App 宸插惎鍔ㄦ椂闄勫姞
+frida -U -n "绀轰緥搴旂敤" -l scripts/frida/location.js
 
-# 全量（噪声大，适合第一轮摸底）
-frida -U -f com.example.app -l scripts/frida/all_hooks.js --no-pause
+# 鍏ㄩ噺锛堝櫔澹板ぇ锛岄€傚悎绗竴杞懜搴曪級
+frida -U -f com.example.app -l scripts/frida/all_hooks.js
 ```
 
-## 脚本列表
+## 鑴氭湰鍒楄〃
 
-| 文件 | 覆盖检查项 |
+| 鏂囦欢 | 瑕嗙洊妫€鏌ラ」 |
 |------|------------|
 | `device_id.js` | D-01 D-02 D-03 |
 | `location.js` | D-05 D-06 |
 | `contacts.js` | D-07 |
 | `clipboard.js` | D-09 |
 | `packages.js` | D-10 |
-| `sensors_audio.js` | D-11（相机/录音粗钩子） |
-| `all_hooks.js` | 上述并集 |
+| `sensors_audio.js` | D-11锛堢浉鏈?褰曢煶绮楅挬瀛愶級 |
+| `all_hooks.js` | 涓婅堪骞堕泦 |
 
-## 读输出
-
-统一前缀：
-
+## 璇昏緭鍑?
+缁熶竴鍓嶇紑锛?
 ```text
 [HOOK][category] method args -> result
 ```
 
-把关键行按 [evidence 规范](../../evidence/README.md) 脱敏归档。
+鎶婂叧閿鎸?[evidence 瑙勮寖](../../evidence/README.md) 鑴辨晱褰掓。銆?
+## 娉ㄦ剰
 
-## 注意
-
-- 某些 ROM/加固环境 spawn 失败，改用 `-n` 附加  
-- 返回值可能是 `null`（权限拒绝），**调用本身**仍是证据  
-- 脚本只做观测，不做利用、不上传数据  
+- 鏌愪簺 ROM/鍔犲浐鐜 spawn 澶辫触锛屾敼鐢?`-n` 闄勫姞  
+- 杩斿洖鍊煎彲鑳芥槸 `null`锛堟潈闄愭嫆缁濓級锛?*璋冪敤鏈韩**浠嶆槸璇佹嵁  
+- 鑴氭湰鍙仛瑙傛祴锛屼笉鍋氬埄鐢ㄣ€佷笉涓婁紶鏁版嵁  

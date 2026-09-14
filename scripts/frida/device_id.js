@@ -1,8 +1,8 @@
-/**
- * device_id.js — 设备标识相关 Hook
- * 对应检查项：D-01 D-02 D-03
+﻿/**
+ * device_id.js 鈥?璁惧鏍囪瘑鐩稿叧 Hook
+ * 瀵瑰簲妫€鏌ラ」锛欴-01 D-02 D-03
  *
- * frida -U -f <pkg> -l scripts/frida/device_id.js --no-pause
+ * frida -U -f <pkg> -l scripts/frida/device_id.js
  */
 'use strict';
 
@@ -80,8 +80,7 @@ Java.perform(function () {
     log('skip ANDROID_ID: ' + e);
   }
 
-  // Wi-Fi MAC（部分版本已限制，仍记录调用）
-  try {
+  // Wi-Fi MAC锛堥儴鍒嗙増鏈凡闄愬埗锛屼粛璁板綍璋冪敤锛?  try {
     const WifiInfo = Java.use('android.net.wifi.WifiInfo');
     WifiInfo.getMacAddress.implementation = function () {
       const ret = this.getMacAddress();
