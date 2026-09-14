@@ -161,12 +161,29 @@
 
 ---
 
+## A3 NewPipe（`org.schabi.newpipe` 0.29.1）— 开源对照
+
+### 权限（完整，显著更少）
+
+| 权限 | 观察 |
+|------|------|
+| `INTERNET` / `ACCESS_NETWORK_STATE` / `WAKE_LOCK` | 网络播放必需 |
+| `WRITE_EXTERNAL_STORAGE` | 下载 |
+| `FOREGROUND_SERVICE*` / `POST_NOTIFICATIONS` / `RECEIVE_BOOT_COMPLETED` | 后台播放/通知 |
+| `SYSTEM_ALERT_WINDOW` | 悬浮窗（可选功能） |
+| **无** 定位 / 电话状态 / 通讯录 / `QUERY_ALL_PACKAGES` / 厂商 OAID 簇 | 与 A1/A2 对照鲜明 |
+
+证据：[E-A3-sta-01](../../evidence/org.schabi.newpipe/static/E-A3-sta-01.md)
+
+### 角色
+
+- 动态方法**可复现对照**（见 03 章）  
+- 隐私**低采集基线**：权限面与动态「未观测到」一致  
+
+---
+
 ## 下一步（动态）
 
-按优先级：
-
-1. A1 冷启动：`device_id.js` + `location.js`  
-2. A2 冷启动：`device_id.js` + `packages.js`  
-3. 再按假设补通讯录/剪贴板  
-
-证据写入 `evidence/<pkg>/dynamic/`，编号 E-xx-dyn-nn。
+1. A1/A2：待 ARM 真机或弱反注入环境后复测 H-xx  
+2. A3：可选补流量与政策对照  
+3. 证据写入 `evidence/<pkg>/dynamic/`，编号 E-xx-dyn-nn。
