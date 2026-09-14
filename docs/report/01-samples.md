@@ -11,21 +11,30 @@
 
 | ID | 应用名 | 包名 | versionName | versionCode | 渠道 | 下载日期 | SHA-256 | 类型 | 备注 |
 |----|--------|------|-------------|-------------|------|----------|---------|------|------|
-| A1 | 墨迹天气 | `com.moji.mjweather` | 9.0942.02 | 1009094202 | 官网 `apps.mojicdn.com` | 2026-09-14 | `62DD0E3AFAD72A51B2E6C92376721F7B81F5103E407AC37F860B5D95CA090DB7` | 工具/天气 | 定位核心功能 |
-| A2 | 豆瓣 | `com.douban.frodo` | 7.133.0 | 361 | 官网 `andariel.douban.com` | 2026-09-14 | `0DB1996A1C0B88E2726C0A26E989C9D25922A9D311756DB48A751C022FDA9FDF` | 内容社区 | 政策可读 |
-| A3 | — | — | — | — | — | — | — | — | 本期不做 |
+| A1 | 墨迹天气 | `com.moji.mjweather` | 9.0942.02 | 1009094202 | 官网 `apps.mojicdn.com` | 2026-09-14 | `62DD0E3AFAD72A51B2E6C92376721F7B81F5103E407AC37F860B5D95CA090DB7` | 工具/天气 | 商业样本；动态受阻 |
+| A2 | 豆瓣 | `com.douban.frodo` | 7.133.0 | 361 | 官网 `andariel.douban.com` | 2026-09-14 | `0DB1996A1C0B88E2726C0A26E989C9D25922A9D311756DB48A751C022FDA9FDF` | 内容社区 | 商业样本；反注入受阻 |
+| A3 | NewPipe | `org.schabi.newpipe` | 0.29.1 | 1015 | F-Droid | 2026-09-14 | `1D66D19EEDBAB969B1BE2E44E0EA35F5F8921CBE83B5C5AC810767CA1A84B7E8` | 内容/媒体（开源） | **动态对照**；x86_64、无壳、可注入 |
 
 本地 APK 路径（**不入 Git**）：
 
-- `C:\Users\13906\privacy-lab\apks\A1-moji-V9.0942.02.apk`（112,540,039 bytes）
-- `C:\Users\13906\privacy-lab\apks\A2-douban.apk`（162,047,672 bytes）
+- `C:\Users\13906\privacy-lab\apks\A1-moji-V9.0942.02.apk`
+- `C:\Users\13906\privacy-lab\apks\A2-douban.apk`
+- `C:\Users\13906\privacy-lab\apks\A3-newpipe-1015.apk`
+
+## 选样角色分工
+
+| 角色 | 样本 | 用途 |
+|------|------|------|
+| 商业深挖（静态） | A1、A2 | 真实 SDK/权限面、合规叙事 |
+| 动态方法对照 | A3 NewPipe（+ AntennaPod 已验证可注入） | 证明 Frida 链路；开源低采集基线 |
 
 ## Jadx 可反编译性（锁定检查）
 
 | ID | java 文件数 | 敏感 API 可检索 | 加固线索 | 结论 |
 |----|-------------|-----------------|----------|------|
-| A1 | 27,692 | 是（友盟/个推/百度等） | `assets/ijiami.dat` 存在，但业务代码可见 | **可用** |
-| A2 | 34,809 | 是（友盟/京东广告/阿里 mtop 等） | 无常见壳特征 | **可用** |
+| A1 | 27,692 | 是（友盟/个推/百度等） | `assets/ijiami.dat` 存在，但业务代码可见 | **静态可用 / 动态受阻** |
+| A2 | 34,809 | 是（友盟/京东广告/阿里 mtop 等） | 无常见壳特征 | **静态可用 / 动态受阻** |
+| A3 | （开源可直接读源码） | N/A | 无 | **动态可用** |
 
 ## 隐私政策入口
 

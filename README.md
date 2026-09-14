@@ -39,9 +39,9 @@
 
 | ID | 应用 | 包名 | 版本 | 渠道 | 状态 |
 |----|------|------|------|------|------|
-| A1 | 墨迹天气 | `com.moji.mjweather` | 9.0942.02 (1009094202) | 官网 CDN | 已锁定 |
-| A2 | 豆瓣 | `com.douban.frodo` | 7.133.0 (361) | 官网下载重定向 | 已锁定 |
-| A3 | — | — | — | — | 本期不做 |
+| A1 | 墨迹天气 | `com.moji.mjweather` | 9.0942.02 | 官网 CDN | 已锁定；静态深挖 / 动态受阻 |
+| A2 | 豆瓣 | `com.douban.frodo` | 7.133.0 | 官网下载 | 已锁定；静态深挖 / 反注入受阻 |
+| A3 | NewPipe（对照） | `org.schabi.newpipe` | 0.29.1 | F-Droid | 已锁定；**动态链路可复现** |
 
 详细哈希与 Jadx 结论见 [docs/report/01-samples.md](docs/report/01-samples.md)。
 
