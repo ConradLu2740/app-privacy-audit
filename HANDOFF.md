@@ -1,6 +1,6 @@
 # Handoff — App Privacy Audit
 
-> 交接说明 · 最后更新：2026-09-14  
+> 交接说明 · 最后更新：2026-09-15  
 > 仓库：https://github.com/ConradLu2740/app-privacy-audit  
 > 本地：`C:\Users\13906\XiaomiMiMoProjects\CTF\app-privacy-audit`
 
@@ -8,7 +8,7 @@
 
 ## 1. 一句话现状
 
-单人 Android 隐私审计作品集：**A1/A2 商业样本静态完成、动态受阻已取证；A3 NewPipe 静态+动态+政策闭环**；仓库双语 README + Mermaid 图已上 GitHub。
+单人 Android 隐私审计作品集：**A1/A2 商业样本静态完成、动态受阻已取证（含真机 Gadget 复测）；A3 NewPipe 静态+动态+政策闭环**；仓库双语 README + Mermaid 图已上 GitHub。
 
 ---
 
@@ -50,14 +50,14 @@
 **A1 墨迹**  
 - 权限：精确定位 + 后台定位 + 活动识别 + 相机等；无通讯录/短信/READ_PHONE_STATE  
 - 静态：OAID/设备标识线索极多；友盟/个推/穿山甲/高德/百度等 SDK  
-- 动态：**x86_64 AVD 无法启动**（仅 ARM 库 + 爱加密 `s.h.e.l.l` `UnsatisfiedLinkError`）  
-- 证据：`E-A1-sta-01`、`E-A1-dyn-01`（受阻）
+- 动态：x86_64 AVD 无法启动；**真机（小米14U）Gadget 重打包后壳校验杀进程**  
+- 证据：`E-A1-sta-01`、`E-A1-dyn-01`、`E-A1-dyn-02`（受阻）
 
 **A2 豆瓣**  
 - 权限：定位、相机、录音、**QUERY_ALL_PACKAGES**  
 - 静态：自研 `com.douban.push` deviceId；剪贴板代码较多；友盟/京东/阿里 mtop 等  
-- 动态：可启动；**Frida attach 后进程自杀**（疑似反注入）  
-- 证据：`E-A2-sta-01`、`E-A2-dyn-01`（受阻）
+- 动态：可启动；Frida attach 后进程自杀；**壳=网易易盾 NIS，与 A1 同类加固**  
+- 证据：`E-A2-sta-01`、`E-A2-dyn-01`、`E-A2-dyn-02`（受阻）
 
 **A3 NewPipe**  
 - 权限极少，无定位/电话/通讯录/OAID 簇  
@@ -77,7 +77,7 @@
 
 | 项 | 状态 | 建议优先级 |
 |----|------|------------|
-| A1/A2 动态复测 | 等 ARM 真机 / ARM 镜像 / 弱反注入 | 高（有真机时） |
+| A1/A2 动态复测 | 真机已试 Gadget，壳杀进程；**需 root 或脱壳** | 高（解锁 BL + Magisk） |
 | A1/A2 政策对照 | 可先读政策，但一致性需动态 | 中 |
 | 流量 T-*（任意样本） | 未配置 mitmproxy | 中 |
 | 报告 04/06 章 | 仅骨架 | 随流量/结论补 |
@@ -94,14 +94,17 @@
 仓库     C:\Users\13906\XiaomiMiMoProjects\CTF\app-privacy-audit
 实验室   C:\Users\13906\privacy-lab\
   apks\   A1/A2/A3 APK（勿提交 Git）
-  tools\  frida-server, jadx\
+  tools\  frida-server, jadx\, apktool.jar, frida-gadget-*.so, debug.keystore
+  gadget-work\  A1/A2 反编译 + gadget 注入工作目录（勿提交）
   jadx-moji\  jadx-douban\   # 已反编译输出
   logs\   Frida/logcat 原始日志
 SDK      c:\trae_solo\workspace\android-studio\android-sdk
-AVD      privacy-api30  (Android 11, x86_64, google_apis)
+AVD      privacy-api30  (Android 11, x86_64, google_apis)  # 仅 A3 可用
+真机     小米 14 Ultra (24031PN0DC / d52606e6) arm64-v8a 无 root
 Python   C:\Program Files\Python311\python.exe
-Frida    17.18.0 (pip frida-tools + 设备端 server)
+Frida    17.18.0 (pip frida-tools + 设备端 server + gadget)
 Jadx     1.5.1
+apktool  2.11.1
 ```
 
 ### 常用命令
@@ -125,6 +128,7 @@ frida -U -p <pid> -l scripts\frida\all_hooks.js
 # - Frida 17 不要 --no-pause
 # - Python API 在 spawn 后立刻 load 可能 Java undefined；CLI attach 更稳
 # - A1 本 AVD 起不来；A2 attach 会自杀
+# - 真机无 root：frida-server 无法 attach 商业 App；Gadget 重打包被壳杀
 ```
 
 详见 `docs/environment.md`。
