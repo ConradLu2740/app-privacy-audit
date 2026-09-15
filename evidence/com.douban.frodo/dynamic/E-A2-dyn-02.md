@@ -19,7 +19,7 @@ A2 豆瓣此前在 x86 AVD 上可启动，但 `frida attach` 后进程自杀（�
 
 ## 3. 本轮状态
 
-- 已 apktool 反编译：`C:\Users\13906\privacy-lab\gadget-work\A2-decompiled\`
+- 已 apktool 反编译：`<lab>\gadget-work\A2-decompiled\`
 - **未注入 gadget / 未重打包安装**（A1 先验证失败后，避免重复无效劳动）
 - 原版 APK 仍可安装启动（此前 E-A2-dyn-01）
 

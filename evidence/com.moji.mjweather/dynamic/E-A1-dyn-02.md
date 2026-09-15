@@ -40,6 +40,6 @@
 
 ## 5. 工件
 
-- 反编译目录：`C:\Users\13906\privacy-lab\gadget-work\A1-decompiled\`
-- gadget APK：`C:\Users\13906\privacy-lab\gadget-work\A1-gadget.apk`（未入库）
+- 反编译目录：`<lab>\gadget-work\A1-decompiled\`
+- gadget APK：`<lab>\gadget-work\A1-gadget.apk`（未入库）
 - frida-gadget：17.18.0 android-arm / android-arm64

@@ -2,7 +2,7 @@
 
 > 交接说明 · 最后更新：2026-09-15  
 > 仓库：https://github.com/ConradLu2740/app-privacy-audit  
-> 本地：`C:\Users\13906\XiaomiMiMoProjects\CTF\app-privacy-audit`
+> 本地：`<repo-root>\app-privacy-audit`（用 `git rev-parse --show-toplevel` 查）
 
 ---
 
@@ -94,8 +94,8 @@
 ### 路径
 
 ```text
-仓库     C:\Users\13906\XiaomiMiMoProjects\CTF\app-privacy-audit
-实验室   C:\Users\13906\privacy-lab\
+仓库     <repo-root>\app-privacy-audit
+实验室   <user-home>\privacy-lab\
   apks\   A1/A2/A3 APK（勿提交 Git）
   tools\  frida-server, jadx\, apktool.jar, frida-gadget-*.so, debug.keystore
   gadget-work\  A1/A2 反编译 + gadget 注入工作目录（勿提交）
@@ -124,7 +124,7 @@ frida-ps -U
 adb shell pm clear org.schabi.newpipe
 adb shell am start -n org.schabi.newpipe/.MainActivity
 adb shell pidof org.schabi.newpipe
-cd C:\Users\13906\XiaomiMiMoProjects\CTF\app-privacy-audit
+cd <repo-root>\app-privacy-audit
 frida -U -p <pid> -l scripts\frida\all_hooks.js
 
 # 注意
@@ -185,7 +185,7 @@ frida -U -p <pid> -l scripts\frida\all_hooks.js
 
 ## 9. 联系上下文
 
-- 竞赛通知联系人（仅背景，本项目不参赛）：许艳萍 17816124715 / 颜曰越 0571-86919137 / nisc@hdu.edu.cn  
+- 竞赛通知联系人（仅背景，本项目不参赛）：详见竞赛通知原文（不入库）  
 - 官网：https://zjnisc.hdu.edu.cn/  
 - 赛题原文：上级目录或 `assets/qiye-mingti.docx`（竞赛附件1，本地曾下载）
 

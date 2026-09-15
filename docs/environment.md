@@ -21,7 +21,7 @@
 | 启动命令 | 见下方「启动模拟器」 |
 | 是否 Root | `adb root` 可用（google_apis 镜像） |
 | SDK 路径 | `c:\trae_solo\workspace\android-studio\android-sdk` |
-| 实验室目录 | `C:\Users\13906\privacy-lab\` |
+| 实验室目录 | `<user-home>\privacy-lab\` |
 
 ### 启动模拟器
 
@@ -38,13 +38,13 @@ adb shell getprop sys.boot_completed   # 应输出 1
 
 | 工具 | 版本 | 路径 / 用途 |
 |------|------|-------------|
-| Jadx CLI | **1.5.1** | `C:\Users\13906\privacy-lab\tools\jadx\bin\jadx.bat` |
+| Jadx CLI | **1.5.1** | `<user-home>\privacy-lab\tools\jadx\bin\jadx.bat` |
 | aapt | build-tools 34/35 | SDK `build-tools` |
 | Java | Android Studio JBR | `C:\Program Files\Android\Android Studio\jbr` |
 
 ```powershell
 # Jadx 反编译到目录
-& "C:\Users\13906\privacy-lab\tools\jadx\bin\jadx.bat" -d out\sample sample.apk
+& "privacy-lab\tools\jadx\bin\jadx.bat" -d out\sample sample.apk
 ```
 
 ## 4. 动态工具
@@ -79,7 +79,7 @@ Android 7+ 默认不信任用户 CA。可选：可配置镜像 / SSL unpinning /
 
 ## 6. 样本安装
 
-- 从**官方应用商店或官网**自行下载 APK，放入 `C:\Users\13906\privacy-lab\apks\`  
+- 从**官方应用商店或官网**自行下载 APK，放入 `<user-home>\privacy-lab\apks\`  
 - **禁止**把 APK 提交进 Git  
 
 ```powershell
@@ -104,8 +104,8 @@ adb install -r .\sample.apk
 ## 8. 工具路径速查
 
 ```powershell
-$SDK  = "c:\trae_solo\workspace\android-studio\android-sdk"
-$LAB  = "C:\Users\13906\privacy-lab"
+$SDK  = "<sdk-root>\android-sdk"
+$LAB  = "<user-home>\privacy-lab"
 $ADB  = "$SDK\platform-tools\adb.exe"
 $EMU  = "$SDK\emulator\emulator.exe"
 $JADX = "$LAB\tools\jadx\bin\jadx.bat"
