@@ -103,7 +103,7 @@
   logs\   Frida/logcat 原始日志
 SDK      c:\trae_solo\workspace\android-studio\android-sdk
 AVD      privacy-api30  (Android 11, x86_64, google_apis)  # 仅 A3 可用
-真机     小米 14 Ultra (24031PN0DC / d52606e6) arm64-v8a 无 root
+真机     小米 14 Ultra arm64-v8a 无 root（序列号不入库，用 `adb devices` 查）
 Python   C:\Program Files\Python311\python.exe
 Frida    17.18.0 (pip frida-tools + 设备端 server + gadget)
 Jadx     1.5.1

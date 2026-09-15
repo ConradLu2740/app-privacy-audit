@@ -1,7 +1,7 @@
 # E-A1-dyn-02 — 真机动态复测（Frida Gadget 重打包）
 
 > 日期：2026-09-15  
-> 设备：小米 14 Ultra（24031PN0DC / aurora），arm64-v8a，MIUI 生产版（`ro.debuggable=0`）  
+> 设备：小米 14 Ultra（arm64-v8a），MIUI 生产版（`ro.debuggable=0`）  
 > 结论：**受阻 — 壳完整性校验检测到重签名，进程被杀**
 
 ---
