@@ -1,0 +1,36 @@
+# APP 隐私合规检测流水线 —— 配置样例
+#
+# 复制为 config.yaml 后按需修改。config.yaml 已被 .gitignore 忽略，
+# 请勿把带 api_key 的配置提交到仓库。
+
+llm:
+  # 可选值：proma-cloud | openai-compatible | fake
+  #
+  #   proma-cloud        开发与演示默认，走 Proma Cloud 的 OpenAI 兼容端点
+  #   openai-compatible  任意兼容 /v1/chat/completions 的服务
+  #                      包括本地部署的 OpenAI 兼容推理服务（如 Ollama 的 /v1 接口），
+  #                      只需把 base_url 指向 http://localhost:11434/v1
+  #   fake               不调用网络，按 fixtures/fake_responses.json 返回固定结果，
+  #                      用于测试与无 API key 的离线复现
+  provider: proma-cloud
+
+  # 模型 ID。留空则使用代码内默认值，或用环境变量 AUDIT_LLM_MODEL 覆盖。
+  model: ""
+
+  # 凭据。建议改用环境变量，不要把密钥写进文件：
+  #   AUDIT_LLM_API_KEY
+  #   AUDIT_LLM_BASE_URL
+  api_key: ""
+  base_url: ""
+
+  # provider=fake 时的固定响应文件
+  fake_responses: "fixtures/fake_responses.json"
+
+# 是否允许引用未核对（status != verified）的法规条文。
+# 默认 false —— 工具会强制执行「引用前核对原文」的纪律，
+# 未核对条文会被剔除并在报告中标出。仅在自查时临时开启。
+allow_unverified_articles: false
+
+# 应用类型，用于必要性判断。取值参考
+# 《常见类型移动互联网应用程序必要个人信息范围规定》的类型划分。
+app_category: "unknown"

@@ -1,0 +1,101 @@
+{
+  "_meta": {
+    "law": "常见类型移动互联网应用程序必要个人信息范围规定",
+    "short": "必要范围规定",
+    "source_url": "https://www.cac.gov.cn/2021-03/22/c_1617986224344737.htm",
+    "issued": "2021-03-12 发布，2021-05-01 施行",
+    "note": "本文件按 APP 类型归纳录入必要个人信息范围，用于必要性判断的确定性参考。text 为要点归纳，核对官方文本后请将 status 改为 verified。"
+  },
+  "articles": [
+    {
+      "article_id": "NEC-2021-MAP",
+      "article": "地图导航类",
+      "title": "地图导航类必要个人信息",
+      "text": "地图导航类，基本功能服务为“定位和导航”，必要个人信息为：位置信息、出发地、到达地。",
+      "tags": ["necessary_scope", "category:map"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-INSTANT_MSG",
+      "article": "即时通信类",
+      "title": "即时通信类必要个人信息",
+      "text": "即时通信类，基本功能服务为“提供文字、图片、语音、视频等网络即时通信服务”，必要个人信息包括：注册用户移动电话号码；账号、即时通信联系人账号列表。",
+      "tags": ["necessary_scope", "category:im"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-NEWS",
+      "article": "新闻资讯类",
+      "title": "新闻资讯类必要个人信息",
+      "text": "新闻资讯类，基本功能服务为“提供图文、音视频等新闻资讯服务”，必要个人信息为：注册用户移动电话号码。",
+      "tags": ["necessary_scope", "category:news"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-SHOPPING",
+      "article": "网上购物类",
+      "title": "网上购物类必要个人信息",
+      "text": "网上购物类，基本功能服务为“购买商品”，必要个人信息包括：注册用户移动电话号码；收货人姓名（名称）、地址、联系电话；支付时间、支付金额、支付渠道等支付信息。",
+      "tags": ["necessary_scope", "category:shopping"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-FOOD",
+      "article": "餐饮外卖类",
+      "title": "餐饮外卖类必要个人信息",
+      "text": "餐饮外卖类，基本功能服务为“餐饮购买及外送”，必要个人信息包括：注册用户移动电话号码；收货人姓名（名称）、地址、联系电话；支付时间、支付金额、支付渠道等支付信息。",
+      "tags": ["necessary_scope", "category:food"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-TOOL",
+      "article": "实用工具类",
+      "title": "实用工具类必要个人信息",
+      "text": "实用工具类，基本功能服务为“日历、天气、词典翻译、计算器、遥控器、手电筒、指南针、时钟闹钟、文件传输、文件管理、壁纸铃声、截图录屏、录音、摄影摄像、扫描、压缩解压缩等”，无须个人信息，即可使用基本功能服务。",
+      "tags": ["necessary_scope", "category:tool"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-WEATHER",
+      "article": "天气类（归入实用工具）",
+      "title": "天气类必要个人信息",
+      "text": "天气类通常归入实用工具类；若提供基于位置的天气，位置信息属实现基本功能所必需，但不得因用户拒绝位置权限而拒绝提供其他基础天气服务。",
+      "tags": ["necessary_scope", "category:tool"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-SOCIAL",
+      "article": "网络社区类",
+      "title": "网络社区类必要个人信息",
+      "text": "网络社区类，基本功能服务为“博客、论坛、社区等话题讨论、信息分享和关注互动”，必要个人信息为：注册用户移动电话号码。",
+      "tags": ["necessary_scope", "category:social"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-VIDEO",
+      "article": "在线影音类",
+      "title": "在线影音类必要个人信息",
+      "text": "在线影音类，基本功能服务为“影视、音乐搜索和播放”，无须个人信息，即可使用基本功能服务。",
+      "tags": ["necessary_scope", "category:video"],
+      "status": "unverified",
+      "verified_on": null
+    },
+    {
+      "article_id": "NEC-2021-SUMMARY",
+      "article": "一般规则",
+      "title": "必要个人信息的一般判定规则",
+      "text": "App 不得因用户不同意提供非必要个人信息而拒绝用户使用其基本功能服务。必要个人信息范围随基本功能服务而定，超出所列范围收集即属非必要。",
+      "tags": ["necessary_scope", "minimal_necessity", "beyond_scope"],
+      "status": "unverified",
+      "verified_on": null
+    }
+  ]
+}

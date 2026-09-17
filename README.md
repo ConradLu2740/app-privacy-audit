@@ -320,6 +320,9 @@ No. Static only shows a code path exists. You need runtime timing, policy text, 
 **Can I scan other apps with this?**  
 Method and scripts: yes. Only on **devices you own**, against **publicly distributed** apps, within local law and the app’s terms. Never commit APKs, raw PCAPs, or third-party personal data.
 
+**Does the compliance engine send data to a third party?**  
+Only the **privacy policy text** is sent to the configured LLM service for structured extraction — policy documents are public compliance material. No packet payloads, no personal data, no APKs. Credentials come from environment variables or a local `config.yaml`, both gitignored. For a fully offline run, point the provider at a locally hosted OpenAI-compatible inference server.
+
 **Next: traffic line?**  
 Start from [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) and [scripts/traffic/README.md](scripts/traffic/README.md). Mind Android 7+ user CAs and SSL pinning.
 

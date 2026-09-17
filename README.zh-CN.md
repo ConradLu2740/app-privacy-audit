@@ -2,8 +2,8 @@
 
 [English](README.md) | **简体中文**
 
-> 一个人也能跑通的 **Android 应用隐私检测** 方法与案例仓库。  
-> 静态逆向 + 动态 Hook + 政策对照，证据可复现，结论不吹牛。
+> 一套 **Android 应用隐私检测** 方法与工具仓库：静态逆向 + 动态 Hook + 流量分析 + **LLM 合规研判引擎**。   
+> 三线证据交叉验证，政策与行为自动对齐，结论可复现、法条不编造。
 
 [![status](https://img.shields.io/badge/status-active-success)](https://github.com/ConradLu2740/app-privacy-audit)
 [![frida](https://img.shields.io/badge/frida-17.18.0-blue)](https://frida.re)
@@ -48,7 +48,49 @@
 
 ---
 
-## 方法（三线证据模型）
+## 方法（三线证据模型 + LLM 合规研判）
+
+### 合规研判引擎
+
+`audit/` 是一套可运行的检测流水线，把「隐私政策 ↔ 实际行为 ↔ 法规条文」三列对照
+从人工填写变成自动化环节：
+
+```mermaid
+flowchart LR
+  P["隐私政策文本"] --> PE["LLM 抽取<br/>结构化声明"]
+  BF["行为事实<br/>静态/动态/流量"] --> RL["规则引擎<br/>确定性判定"]
+  PE --> RL
+  PE --> SV["LLM 语义判定"]
+  BF --> SV
+  RL --> F["违规判定"]
+  SV --> F
+  REG["本地法规条文库"] -->|检索命中条号| F
+  F --> RPT["检测报告"]
+```
+
+**三条防幻觉闸门**——LLM 只做语义理解，不允许它生成事实与法条：
+
+1. **原文引证校验**：LLM 抽取的每条政策声明必须附原文片段，代码做子串匹配，
+   不通过即丢弃并计入丢弃率。编造政策内容在架构上不可能通过。
+2. **条文核对状态**：法规条文库中 `status=unverified` 的条目默认不参与判定，
+   除非显式开启。工具自身强制执行「引用前核对原文」的纪律。
+3. **证据非空约束**：违规判定的构造强制校验证据编号非空，无证据的判定无法产生。
+
+条号全部由本地条文库检索得出，LLM 不参与条号生成；违规类型取自闭集，
+模型无法编造新类型。
+
+**离线验证**（无需网络与 API key）：
+
+```bash
+pip install -r requirements.txt
+python -m audit smoke      # 端到端冒烟，产物写入 out/
+python -m pytest tests/ -v # 21 项测试，覆盖三条闸门与规则引擎
+```
+
+详细用法见 [audit/README.md](audit/README.md)，设计文档见
+[docs/design/llm-compliance-engine.md](docs/design/llm-compliance-engine.md)。
+
+### 三线证据模型
 
 ### 架构总览
 
@@ -295,7 +337,17 @@ app-privacy-audit/
 ├── README.zh-CN.md           ← 中文
 ├── HANDOFF.md                ← 项目现状与续作说明
 ├── LICENSE
+├── audit/                    ← LLM 合规研判引擎（可运行流水线）
+│   ├── llm/                  #   Provider 抽象层
+│   ├── policy/               #   政策 → 结构化声明
+│   ├── regulation/           #   本地法规条文库
+│   ├── align/                #   声明-行为对齐引擎
+│   └── report/               #   报告生成
+├── fixtures/                 # 冒烟与测试用固定数据
+├── tests/                    # 21 项测试
+├── config.example.yaml       # 引擎配置样例
 ├── docs/
+│   ├── design/               # 引擎设计文档
 │   ├── methodology.md        # 三线方法与假设驱动
 │   ├── compliance.md         # 政策↔行为↔法规怎么对齐
 │   ├── environment.md        # 环境记录与冒烟
@@ -320,6 +372,11 @@ A: 不能。静态只说明「代码路径存在」。要结合动态时序、�
 
 **Q: 可以拿去扫别的 App 吗？**  
 A: 方法和脚本可以；请只在**自有设备**上对**公开分发**应用做研究，遵守当地法律与目标 App 条款。不要把 APK、原始 PCAP、他人隐私提交到公开仓库。
+
+**Q: 合规研判引擎会把数据发给第三方吗？**  
+A: 只有**隐私政策文本**会发送至配置的 LLM 服务用于结构化抽取。政策文本本身是公开的合规文档。
+不发送抓包载荷、不发送个人信息、不发送 APK。凭据只从环境变量或本地 `config.yaml` 读取，
+两者都在 `.gitignore` 中。若需完全离线，可把 provider 换成本地部署的 OpenAI 兼容推理服务。
 
 **Q: 想继续做流量线？**  
 A: 从 [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) 和 [scripts/traffic/README.md](scripts/traffic/README.md) 开始；注意 Android 7+ 用户证书限制与 SSL pinning。

@@ -1,0 +1,70 @@
+{
+  "sample": "A3",
+  "note": "测试用固定行为事实。非真实采集结果，仅用于验证流水线端到端可执行。",
+  "facts": [
+    {
+      "fact_id": "BF-A3-dyn-001",
+      "sample": "A3",
+      "source": "dynamic",
+      "evidence_ref": "E-A3-dyn-01",
+      "data_type": "device_id",
+      "raw_observation": "TelephonyManager.getDeviceId() 在隐私弹窗出现前被调用",
+      "actor": "app",
+      "phase": "before_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T10:00:01+08:00"
+    },
+    {
+      "fact_id": "BF-A3-dyn-002",
+      "sample": "A3",
+      "source": "dynamic",
+      "evidence_ref": "E-A3-dyn-02",
+      "data_type": "contacts",
+      "raw_observation": "ContactsContract 查询由嵌入 SDK 触发",
+      "actor": "sdk:com.example.analytics",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T10:01:12+08:00"
+    },
+    {
+      "fact_id": "BF-A3-dyn-003",
+      "sample": "A3",
+      "source": "dynamic",
+      "evidence_ref": "E-A3-dyn-02",
+      "data_type": "clipboard",
+      "raw_observation": "ClipboardManager.getPrimaryClip() 在首页加载时被调用",
+      "actor": "app",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T10:01:20+08:00"
+    },
+    {
+      "fact_id": "BF-A3-trf-001",
+      "sample": "A3",
+      "source": "traffic",
+      "evidence_ref": "E-A3-trf-01",
+      "data_type": "location",
+      "raw_observation": "位置字段以明文 HTTP 提交",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "geo.example-api.com",
+      "transport": "http",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T10:02:05+08:00"
+    },
+    {
+      "fact_id": "BF-A3-trf-002",
+      "sample": "A3",
+      "source": "traffic",
+      "evidence_ref": "E-A3-trf-01",
+      "data_type": "device_id",
+      "raw_observation": "设备标识符上报至统计域名",
+      "actor": "sdk:com.example.analytics",
+      "phase": "after_consent",
+      "destination": "analytics.example-sdk.com",
+      "transport": "https",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T10:02:30+08:00"
+    }
+  ]
+}

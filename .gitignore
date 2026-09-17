@@ -34,3 +34,12 @@ frida-server*
 objection-output/
 *.log
 !docs/**/*.log
+
+# Local config with credentials — never commit
+config.yaml
+config.yml
+.env
+
+# Pipeline run artifacts
+out/
+.proma-models.json

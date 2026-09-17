@@ -1,0 +1,81 @@
+{
+  "_note": "FakeProvider 的固定响应。按 key 在 system+user 提示词中出现来匹配。用于冒烟测试与无网络复现。",
+
+  "信息收集范围": {
+    "declarations": [
+      {
+        "data_type": "location",
+        "purpose": "展示本地天气",
+        "collect_phase": "after_consent",
+        "shared_with": [],
+        "transport_protected": true,
+        "quote": "会收集您的位置信息用于展示本地天气"
+      },
+      {
+        "data_type": "device_id",
+        "purpose": "统计服务稳定性",
+        "collect_phase": "unknown",
+        "shared_with": [],
+        "transport_protected": true,
+        "quote": "本应用收集设备标识符用于统计服务稳定性"
+      },
+      {
+        "data_type": "contacts",
+        "purpose": "声明不予收集",
+        "collect_phase": "unknown",
+        "shared_with": [],
+        "transport_protected": null,
+        "quote": "我们不会收集您的通讯录、短信内容"
+      }
+    ]
+  },
+
+  "信息存储与保护": {
+    "declarations": [
+      {
+        "data_type": "account",
+        "purpose": "账号信息加密存储",
+        "collect_phase": "after_consent",
+        "shared_with": [],
+        "transport_protected": true,
+        "quote": "我们采用加密方式存储您的账号信息"
+      }
+    ]
+  },
+
+  "第三方服务": {
+    "declarations": []
+  },
+
+  "判断以下数据收集行为是否属于": {
+    "is_beyond_scope": true,
+    "is_necessary_for_core_function": false,
+    "reason": "剪贴板内容与天气查询的基本功能无直接关系，且政策未声明该项收集。",
+    "confidence": "high"
+  },
+
+  "判断以下第三方共享目标": {
+    "geo.example-api.com": {
+      "declared": false,
+      "matched_text": "",
+      "reason": "政策未点名该域名或其所属主体"
+    },
+    "analytics.example-sdk.com": {
+      "declared": false,
+      "matched_text": "",
+      "reason": "政策仅笼统称统计服务，未点名接收方"
+    },
+    "sdk:com.example.analytics": {
+      "declared": false,
+      "matched_text": "",
+      "reason": "政策未列出该第三方代码的提供方"
+    }
+  },
+
+  "判断政策声明与实际观测行为之间是否存在矛盾": {
+    "contradicts": true,
+    "violation_type": "deceptive_policy",
+    "reason": "政策明确声明不收集通讯录，但运行时观测到通讯录查询行为。",
+    "confidence": "high"
+  }
+}
