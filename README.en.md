@@ -2,8 +2,8 @@
 
 **English** | [简体中文](README.md)
 
-> A solo-friendly, reproducible **Android app privacy audit** lab.  
-> Static reverse engineering + dynamic Frida hooks + policy mapping — with honest blockers, not marketing claims.
+> A hands-on Android privacy audit: static reverse engineering + Frida hooks + traffic capture + an LLM compliance engine that is not allowed to hallucinate.
+> Every claim carries an evidence ID; every blocker is documented; zero invented statutes.
 
 [![status](https://img.shields.io/badge/status-active-success)](https://github.com/ConradLu2740/app-privacy-audit)
 [![frida](https://img.shields.io/badge/frida-17.18.0-blue)](https://frida.re)
@@ -12,43 +12,73 @@
 
 ---
 
-## Why this repo exists
+## What this repo is
 
-If you have audited mobile privacy before, some of this will sound familiar:
+In one sentence: **I took three real apps, verified separately what their code *can* do and what they *actually do* at runtime, and published the whole process.**
 
-- Static search finds dozens of `getDeviceId` sites — **but does the app actually call them at runtime?**
-- A commercial APK is packed; the emulator crashes on launch
-- Frida attaches for one second, then the process kills itself (anti-injection)
-- A report shouts “illegal collection” without reproducible evidence
+If you have done mobile privacy work, you know how easy it is to fool yourself:
 
-This project separates **“code path exists”** from **“runtime behavior observed”** using three evidence lines, and **records failures as first-class results**.
+- A static search surfaces a dozen `getDeviceId` calls — scary, but **was any of them actually invoked?**
+- Commercial APKs are packed; the emulator crashes on launch
+- Frida attaches for a second, then the process kills itself
+- A report claims "illegal collection" and has nothing to show when asked "prove it"
 
-Topic origin: enterprise challenge brief from the 9th Zhejiang Provincial College Student Network & Information Security Contest (Zhejiang Institute of Quality Science). This repo is **not a contest submission** — it is maintained as a personal portfolio / learning artifact.
+This repo splits the work into three evidence lines and **only writes a conclusion when they cross-check**:
 
-**Who this is for**
+| Line | Question | Tools |
+|------|----------|-------|
+| Static | Does the code path **exist**? | Jadx, aapt, keyword scanner |
+| Dynamic | Was it **actually called**? | Frida hooks |
+| Traffic | Did data **leave the device**? | PCAPdroid / mitmproxy |
+| Policy | Were users **told**? | LLM extraction + manual review |
 
-| You are | What you get |
-|---------|----------------|
-| Security / privacy student | A reusable workflow + evidence ID scheme |
-| Developer building a portfolio | Real samples, real blockers, a story you can tell |
-| Peer who wants to reproduce | Env steps, scripts, checklist, report skeleton |
+When a line fails, it fails openly. Injection failure, packer crash, anti-debug — all recorded as **blocked**, with reasons. A blocker is a result, not an embarrassment, and it makes a better story than a fake success.
 
----
+Origin: enterprise challenge brief from the 9th Zhejiang Provincial College Student Network & Information Security Contest (Zhejiang Institute of Quality Science). This repo is **not a contest submission** — it is a personal portfolio.
 
-## Problem space
-
-Typical mobile privacy issues:
-
-1. **Over-broad permissions** — location / contacts / phone state unrelated to the feature  
-2. **Policy vs practice gap** — “we do not collect” in text, SDKs still collect  
-3. **Weak transport / storage** — cleartext HTTP, sensitive fields in logs  
-
-Decompilation alone over-reports; packet capture alone under-reports; policy text alone proves nothing.  
-So the method is fixed: **static → dynamic → policy**. Only cross-checked items become “consistent / inconsistent”; everything else is “blocked / needs review”.
+**Who this is for**: security students (a workflow you can copy), developers building a portfolio (real blockers beat fake smoothness), peers who want to reproduce (scripts, checklist, full report).
 
 ---
 
-## Method (three evidence lines)
+## LLM compliance engine
+
+`audit/` is a runnable pipeline that automates the three-way mapping — **policy declarations ↔ observed behavior ↔ statute articles**:
+
+```mermaid
+flowchart LR
+  P["Policy text"] --> PE["LLM extraction<br/>structured declarations"]
+  BF["Behavior facts<br/>static/dynamic/traffic"] --> RL["Rule engine<br/>deterministic verdicts"]
+  PE --> RL
+  PE --> SV["LLM semantic judgment"]
+  BF --> SV
+  RL --> F["Findings"]
+  SV --> F
+  REG["Local statute library"] -->|article lookup| F
+  F --> RPT["Report"]
+```
+
+The obvious question: what about LLM hallucination? The engine answers with three gates — **the LLM only does semantic understanding; it can never produce facts or statutes**:
+
+1. **Quote verification**: every extracted declaration must carry a verbatim quote from the policy; code does substring matching and drops failures with a counter. Fabricated policy content cannot pass by design.
+2. **Article status**: statutes not verified against their source text are excluded from verdicts unless explicitly allowed — "check before citing" enforced in code.
+3. **Non-empty evidence**: a finding without evidence IDs is rejected at construction; it cannot exist in the architecture.
+
+Article numbers come from the local library only; violation types come from a closed enum. The model has nothing to invent.
+
+**Verify offline** (no network, no API key):
+
+```bash
+pip install -r requirements.txt
+python -m audit smoke        # end-to-end smoke, artifacts in out/
+python -m pytest tests/ -v   # 21 tests: three gates + rule engine
+python evals/run_eval.py     # 6 eval cases: P/R/F1 + anti-hallucination gates, all green
+```
+
+Details: [audit/README.md](audit/README.md) · Design: [docs/design/llm-compliance-engine.md](docs/design/llm-compliance-engine.md)
+
+---
+
+## Method: how the three lines cross-check
 
 ### Architecture
 
@@ -87,7 +117,7 @@ flowchart TB
   R --> FIX
 ```
 
-### Standard pipeline
+### Pipeline
 
 ```mermaid
 flowchart LR
@@ -103,7 +133,7 @@ flowchart LR
   I --> J["Report 00–06"]
 ```
 
-### Cross-checking evidence
+### Confidence levels
 
 ```mermaid
 flowchart TD
@@ -115,12 +145,12 @@ flowchart TD
   U --> X["Cannot alone claim violation"]
 ```
 
-**Conventions**
+Ground rules:
 
-- Static hits create **hypotheses only** — not violation verdicts  
-- “Not observed” ≠ “does not exist”; always state the observation window  
-- Injection failure, packer crash, anti-debug → status **blocked**; never substitute static for dynamic  
-- Evidence IDs: `E-<sample>-sta/dyn/trf/pol-nn`
+- A static hit is a **hypothesis**, never a violation verdict
+- "Not observed" ≠ "does not exist" — always state the observation window
+- Blocked is blocked; **never substitute static results for dynamic**
+- Evidence IDs: `E-<sample>-sta/dyn/trf/pol-nn`; reports cite IDs only
 
 Details: [docs/methodology.md](docs/methodology.md) · Checklist: [checklists/privacy-checklist.md](checklists/privacy-checklist.md)
 
@@ -128,19 +158,17 @@ Details: [docs/methodology.md](docs/methodology.md) · Checklist: [checklists/pr
 
 ## Samples (locked 2026-09-14)
 
+Two commercial apps plus one open-source control:
+
 | ID | App | Package | Version | Why | Dynamic |
 |----|-----|---------|---------|-----|---------|
-| **A1** | Moji Weather | `com.moji.mjweather` | 9.0942.02 | Weather = location-centric; large commercial SDK surface | Blocked |
-| **A2** | Douban | `com.douban.frodo` | 7.133.0 | Content community; readable policy; pair with A1 | Blocked |
-| **A3** | [NewPipe](https://github.com/TeamNewPipe/NewPipe) | `org.schabi.newpipe` | 0.29.1 | Open source, unpacked, x86_64 — **dynamic control** | OK |
+| **A1** | Moji Weather | `com.moji.mjweather` | 9.0942.02 | Weather needs location by nature; heavy commercial SDK surface | Blocked |
+| **A2** | Douban | `com.douban.frodo` | 7.133.0 | Content community; readable policy; pairs with A1 | Blocked |
+| **A3** | [NewPipe](https://github.com/TeamNewPipe/NewPipe) | `org.schabi.newpipe` | 0.29.1 | Open source, unpacked, x86_64 — **the dynamic control** | OK |
 
-Roles:
+A1/A2 are the commercial deep-dives plus engineering blockers; A3 proves the whole pipeline works in this lab.
 
-- **A1 / A2** — deep static on commercial apps + engineering blockers  
-- **A3** — proves the dynamic/compliance path works here; low-collection baseline  
-
-Hashes and channels: [docs/report/01-samples.md](docs/report/01-samples.md).  
-**APKs are not in this repo** — download from official channels yourself.
+Hashes and channels: [docs/report/01-samples.md](docs/report/01-samples.md). **APKs are not in this repo** — fetch them from official channels.
 
 ---
 
@@ -148,25 +176,25 @@ Hashes and channels: [docs/report/01-samples.md](docs/report/01-samples.md).
 
 | Sample | Static | Dynamic | Traffic | Policy map | One-liner |
 |--------|--------|---------|---------|------------|-----------|
-| A1 Moji | Done | **Blocked** (ARM-only + ijiami shell crashes on x86_64 AVD) | **Done** (60s after first launch: 535 conns / 74 hosts; third-party SDKs confirmed live; 50 plaintext HTTP) | Done (static-only) | Large permission/SDK surface; OAID-heavy (323 files); third-party SDKs verified on the wire; plaintext log endpoints |
-| A2 Douban | Done | **Blocked** (likely anti-Frida; process dies on attach — 网易易盾 NIS) | Done (own domains only, 60s window) | Done (static-only) | Own deviceId + clipboard-heavy code; commercial SDK signals but not triggered in 60s unlogged session |
-| A3 NewPipe | Done | **Done** | **Done** (only `www.youtube.com`) | **Done** | Minimal permissions; no ID/location hits in 30s playbook; aligns with GDPR policy |
+| A1 Moji | ✅ | ❌ Blocked (ARM-only + ijiami shell crashes on x86_64 AVD) | ✅ 60s after first launch: 535 conns / 74 hosts, third-party SDKs confirmed live, 50 plaintext HTTP | ✅ | Huge permission/SDK surface; OAID in 323 files; third-party sharing confirmed on the wire; plaintext log endpoints |
+| A2 Douban | ✅ | ❌ Likely anti-Frida (process dies on attach — 网易易盾 NIS) | ✅ Own domains only in 60s | ✅ | Custom deviceId + clipboard-heavy code; commercial SDKs silent in an unlogged 60s session |
+| A3 NewPipe | ✅ | ✅ Alive through the 30s playbook, zero business hits | ✅ Only `www.youtube.com` | ✅ | Minimal permissions; behavior matches the GDPR policy — the textbook control |
+
+About those two "blocked" cells: A1 is an ABI mismatch plus the ijiami packer; A2 is anti-injection. In the same lab, NewPipe and a calculator app hook fine — so it is the samples' defenses, not the scripts. Most reports quietly skip these failures; here they are on record.
 
 ### Top findings
 
-| ID | Sample | Level | Title | Evidence |
-|----|--------|-------|-------|----------|
-| F-01 | A1 | 中 | 后台定位 + 后台静默收集设备信息，政策已披露但风险面广 | E-A1-sta-01 · E-A1-pol-01 (C-05-m) |
-| F-02 | A1 | 中 | OAID/设备标识体系庞大（323 文件命中），多家第三方 SDK 未单独点名 | E-A1-sta-01 · E-A1-pol-01 (R-13) |
-| F-04 | A1 | 中 | 第三方 SDK（京东/GDT/穿山甲/高德/百度/个推/友盟）首启 60s 全部观测联网，政策未单独点名 | E-A1-trf-02 · E-A1-pol-01 (R-13) |
-| F-05 | A2 | 低 | `QUERY_ALL_PACKAGES` 已披露但范围限于「跳转唤起」 | E-A2-sta-01 · E-A2-pol-01 (R-21) |
-| F-06 | A2 | 低 | 剪贴板「仅本地识别，不上传」声明，需动态验证 | E-A2-sta-01 · E-A2-pol-01 (R-22) |
-| F-09 | A3 | 无 | 权限面极窄 + 流量仅 YouTube 官方域名，与 GDPR 政策一致 | E-A3-sta-01 · E-A3-dyn-02 · E-A3-trf-01 |
-| F-10 | A1 | 中 | 50 条明文 HTTP 集中于自有日志端点（`v1.log.moji.com` 等），存在嗅探/篡改面 | E-A1-trf-02 |
+| ID | Sample | Level | Finding | Evidence |
+|----|--------|-------|---------|----------|
+| F-01 | A1 | Medium | Background location + silent device-info collection; disclosed but broad | E-A1-sta-01 · E-A1-pol-01 |
+| F-02 | A1 | Medium | OAID/device-ID system spanning 323 files; several SDKs never named individually | E-A1-sta-01 · E-A1-pol-01 |
+| F-04 | A1 | Medium | JD / GDT / Pangle / AMap / Baidu / Getui / Umeng all went online within 60s of first launch | E-A1-trf-02 |
+| F-05 | A2 | Low | `QUERY_ALL_PACKAGES` disclosed, but the stated scope ("app jumping") is narrower than reality | E-A2-sta-01 · E-A2-pol-01 |
+| F-06 | A2 | Low | Clipboard "local-only" claim still awaits dynamic verification | E-A2-sta-01 · E-A2-pol-01 |
+| F-09 | A3 | None | Narrow permissions + YouTube-only traffic, consistent with policy | E-A3-sta-01 · E-A3-dyn-02 · E-A3-trf-01 |
+| F-10 | A1 | Medium | 50 plaintext HTTP connections to first-party log endpoints (`v1.log.moji.com`, etc.) | E-A1-trf-02 |
 
-Full risk table (F-01…F-10) and remediation: [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md).
-
-Sample pipeline:
+Full table (F-01…F-10) with remediation: [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md).
 
 ```mermaid
 stateDiagram-v2
@@ -188,58 +216,51 @@ stateDiagram-v2
   end note
 ```
 
-**A3 dynamic playbook (reproducible)**
+**A3 dynamic playbook (follow along to reproduce)**
 
-1. `pm clear` → cold start `MainActivity`  
-2. After ~1s: `frida -U -p <pid> -l scripts/frida/all_hooks.js`  
-3. Tap bottom tabs, scroll, open an item (~30s)  
-4. Process stays alive; no IMEI / ANDROID_ID / location business hits in the hook log  
+1. `pm clear`, cold start `MainActivity`
+2. After ~1s: `frida -U -p <pid> -l scripts/frida/all_hooks.js` (attach, don't spawn)
+3. Tap tabs, scroll lists, open items for ~30s
+4. Process stays alive; the hook log shows no IMEI / ANDROID_ID / location hits
 
-Evidence under `evidence/org.schabi.newpipe/`.
+Evidence under `evidence/org.schabi.newpipe/`. Full report, six chapters:
 
 | Chapter | File |
 |---------|------|
-| Samples | [docs/report/01-samples.md](docs/report/01-samples.md) |
-| Static | [docs/report/02-static-analysis.md](docs/report/02-static-analysis.md) |
-| Dynamic | [docs/report/03-dynamic-analysis.md](docs/report/03-dynamic-analysis.md) |
-| Traffic | [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) |
-| Compliance | [docs/report/05-compliance-review.md](docs/report/05-compliance-review.md) |
-| Findings | [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md) |
+| Samples | [01](docs/report/01-samples.md) |
+| Static | [02](docs/report/02-static-analysis.md) |
+| Dynamic | [03](docs/report/03-dynamic-analysis.md) |
+| Traffic | [04](docs/report/04-traffic-analysis.md) |
+| Compliance | [05](docs/report/05-compliance-review.md) |
+| Findings | [06](docs/report/06-findings-and-fixes.md) |
 
-> Report body text is currently Chinese; this file is the English entry point.
+> Report chapters are in Chinese; this file is the English entry point.
 
 ---
 
 ## 5-minute reproduce (A3 dynamic)
 
-### You need
-
-- Windows / macOS / Linux  
-- Android SDK (`adb` + emulator) or a rooted device  
-- Python 3.10+  
-- Network to fetch an APK  
-
-### Steps
+You need: Android SDK (adb + emulator) or a rooted device, Python 3.10+, and network access to fetch an APK.
 
 **1. Install Frida**
 
 ```bash
 pip install frida-tools
-frida --version   # note the version, e.g. 17.18.0
+frida --version    # note the version, e.g. 17.18.0
 ```
 
 **2. Start an emulator**
 
-Create an **API 30 / x86_64** AVD (validated image: `google_apis;x86_64`).
+Create an API 30 / x86_64 AVD (validated image: `google_apis;x86_64`).
 
 ```bash
 adb devices
 adb root
 ```
 
-**3. Push and start frida-server**
+**3. Push frida-server**
 
-Download the **same version** `frida-server-<ver>-android-x86_64.xz` from [Frida Releases](https://github.com/frida/frida/releases):
+Grab the **same version** `frida-server-<ver>-android-x86_64.xz` from [Frida Releases](https://github.com/frida/frida/releases):
 
 ```bash
 adb push frida-server /data/local/tmp/
@@ -250,7 +271,7 @@ frida-ps -U | head
 
 **4. Install NewPipe**
 
-Get the APK from [F-Droid](https://f-droid.org/packages/org.schabi.newpipe/) or GitHub Releases:
+From [F-Droid](https://f-droid.org/packages/org.schabi.newpipe/) or GitHub Releases:
 
 ```bash
 adb install -r NewPipe.apk
@@ -261,21 +282,11 @@ adb install -r NewPipe.apk
 ```bash
 adb shell am start -n org.schabi.newpipe/.MainActivity
 adb shell pidof org.schabi.newpipe
-
-# Frida 17: do not pass --no-pause
-frida -U -p <pid> -l scripts/frida/all_hooks.js
+frida -U -p <pid> -l scripts/frida/all_hooks.js   # Frida 17: no --no-pause
 ```
 
-You should see:
-
-```text
-[HOOK][all] installing combined hooks...
-[HOOK][device] hooked android.telephony.TelephonyManager.getDeviceId
-...
-[HOOK][all] combined hooks ready
-```
-
-Interact with the app; `[HOOK][...] method() -> ...` lines are runtime hits.
+You should see `[HOOK][all] combined hooks ready`. Interact with the app; any
+`[HOOK][...] method() -> ...` line is a runtime hit.
 
 **6. Archive evidence (optional)**
 
@@ -290,13 +301,12 @@ Lab notes from validation: [docs/environment.md](docs/environment.md) (Chinese).
 | Item | Value |
 |------|-------|
 | OS | Windows 11 |
-| Emulator | Android SDK Emulator, AVD `privacy-api30` |
-| System | Android 11 (API 30), x86_64 |
+| Emulator | AVD `privacy-api30`, Android 11 (API 30) x86_64 |
 | Frida | client + server 17.18.0 |
 | Jadx | 1.5.1 |
 | Date | 2026-09-14 |
 
-Paths may differ on your machine. Success criterion: **Frida lists processes, A3 attaches without dying**.
+Paths may differ on your machine. The only success criterion: **Frida lists processes and A3 attaches without dying**.
 
 ---
 
@@ -308,16 +318,29 @@ app-privacy-audit/
 ├── README.en.md              ← English
 ├── HANDOFF.md                ← status & how to resume
 ├── LICENSE
+├── audit/                    ← LLM compliance engine (runnable pipeline)
+│   ├── llm/                  #   provider abstraction
+│   ├── policy/               #   policy → structured declarations
+│   ├── regulation/           #   local statute library
+│   ├── align/                #   declaration-behavior alignment
+│   └── report/               #   report generation
+├── fixtures/                 # fixed data for smoke & tests
+├── tests/                    # 21 unit tests
+├── evals/                    # engine eval set (6 cases incl. anti-hallucination gate)
+├── config.example.yaml
 ├── docs/
+│   ├── design/               # engine design docs
 │   ├── methodology.md
 │   ├── compliance.md
 │   ├── environment.md
 │   ├── sample-candidates.md
-│   └── report/               # 00–06 chapters (Chinese)
+│   └── report/               # chapters 00–06 (Chinese)
 ├── checklists/
 │   └── privacy-checklist.md
-├── scripts/frida/
-├── evidence/                 # redacted, per package
+├── scripts/
+│   ├── frida/                # device_id / location / all_hooks etc.
+│   └── static/               # static keyword scanner scan.py
+├── evidence/                 # redacted evidence, per package
 └── assets/
 ```
 
@@ -325,34 +348,32 @@ app-privacy-audit/
 
 ## FAQ
 
-**Why no dynamic data for A1/A2 — is the script broken?**  
-No. NewPipe and a calculator app inject fine in the same lab. A1 is ABI/packer; A2 looks like anti-injection. See the “blocked” sections in the dynamic report.
+**Why no dynamic data for A1/A2 — is the script broken?**
+No. NewPipe and a calculator app hook fine in the same lab. A1 is ABI/packer, A2 looks like anti-injection. The samples' defenses, not the scripts. See the "blocked" sections in the dynamic report.
 
-**Can I claim a violation from a static `getDeviceId` hit?**  
-No. Static only shows a code path exists. You need runtime timing, policy text, and legal elements.
+**Can a static `getDeviceId` hit support a violation claim?**
+No. Static shows a code path exists. A verdict needs runtime timing + policy text + legal elements.
 
-**Can I scan other apps with this?**  
-Method and scripts: yes. Only on **devices you own**, against **publicly distributed** apps, within local law and the app’s terms. Never commit APKs, raw PCAPs, or third-party personal data.
+**Can I scan other apps with this?**
+Method and scripts: yes. Only on devices you own, against publicly distributed apps, within local law and the app's terms. Never commit APKs, raw PCAPs, or other people's data.
 
-**Does the compliance engine send data to a third party?**  
-Only the **privacy policy text** is sent to the configured LLM service for structured extraction — policy documents are public compliance material. No packet payloads, no personal data, no APKs. Credentials come from environment variables or a local `config.yaml`, both gitignored. For a fully offline run, point the provider at a locally hosted OpenAI-compatible inference server.
+**Does the engine send data to third parties?**
+Only the privacy policy text goes to the configured LLM service for extraction — policy documents are public compliance material. No payloads, no personal data, no APKs. Credentials come from env vars or a local `config.yaml`, both gitignored. For a fully offline run, point the provider at a local OpenAI-compatible server; no code changes needed.
 
-**Next: traffic line?**  
-Start from [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) and [scripts/traffic/README.md](scripts/traffic/README.md). Mind Android 7+ user CAs and SSL pinning.
+**Where do I start with the traffic line?**
+[docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) and [scripts/traffic/README.md](scripts/traffic/README.md). Mind Android 7+ user CAs and SSL pinning.
 
 ---
 
 ## Disclaimers
 
-- For security research, compliance learning, and teaching only.  
-- No full APKs; no raw privacy-bearing captures in git.  
-- Limited versions and observation windows; “not observed” is not a legal finding of “does not exist”.  
-- Verify any statute text before citing.
-
----
+- For security research, compliance learning, and teaching only
+- No full APKs; no raw privacy-bearing captures in git
+- Limited versions and observation windows; "not observed" is not a legal finding of "does not exist"
+- Verify any statute text before citing
 
 ## License
 
 [MIT](LICENSE) — Issues/PRs welcome for checklists and scripts; please do not submit sample binaries.
 
-Stars help motivate the traffic line and more samples.
+If this repo helps you, a star keeps the traffic line and more samples coming.
