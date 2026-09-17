@@ -1,0 +1,6 @@
+{
+  "case": "ev6-consistent-clean",
+  "description": "干净对照：声明、行为、传输、共享全部一致 → 期望零判定（验证不误报）。",
+  "app_category": "工具类",
+  "expect_findings": []
+}

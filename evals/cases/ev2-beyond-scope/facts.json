@@ -1,0 +1,30 @@
+{
+  "sample": "EV2",
+  "note": "评测用例：政策仅声明位置，行为事实观测到应用列表枚举 → 期望语义判定命中 BEYOND_SCOPE(installed_apps)。",
+  "facts": [
+    {
+      "fact_id": "BF-EV2-dyn-001",
+      "sample": "EV2",
+      "source": "dynamic",
+      "evidence_ref": "E-EV2-dyn-01",
+      "data_type": "location",
+      "raw_observation": "定位请求发生在同意后，用于天气展示",
+      "actor": "app",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:01+08:00"
+    },
+    {
+      "fact_id": "BF-EV2-dyn-002",
+      "sample": "EV2",
+      "source": "dynamic",
+      "evidence_ref": "E-EV2-dyn-02",
+      "data_type": "installed_apps",
+      "raw_observation": "getInstalledPackages() 在首页加载时枚举全部已安装应用",
+      "actor": "app",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:03+08:00"
+    }
+  ]
+}

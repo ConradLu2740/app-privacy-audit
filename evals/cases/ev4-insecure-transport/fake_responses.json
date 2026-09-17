@@ -1,0 +1,16 @@
+{
+  "_note": "EV4：共享目标 log.example.com 已声明，不应产生共享候选；明文 HTTP 由确定性规则命中。",
+  "用于统计服务稳定性与改进产品体验": {
+    "declarations": [
+      {
+        "data_type": "device_id",
+        "purpose": "统计服务稳定性与改进产品体验",
+        "collect_phase": "after_consent",
+        "shared_with": ["log.example.com"],
+        "transport_protected": true,
+        "quote": "收集设备标识符，用于统计服务稳定性与改进产品体验"
+      }
+    ]
+  },
+  "已披露的内部统计域名做加密处理": []
+}

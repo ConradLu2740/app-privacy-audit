@@ -1,0 +1,34 @@
+{
+  "sample": "EV3",
+  "note": "评测用例：政策声明位置共享给天气服务商，行为事实观测到位置同时发往未声明的广告域名 → 期望语义判定命中 UNDECLARED_SHARING。",
+  "facts": [
+    {
+      "fact_id": "BF-EV3-trf-001",
+      "sample": "EV3",
+      "source": "traffic",
+      "evidence_ref": "E-EV3-trf-01",
+      "data_type": "location",
+      "raw_observation": "位置参数上报至天气服务商域名",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "weather-service.example.com",
+      "transport": "https",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:05+08:00"
+    },
+    {
+      "fact_id": "BF-EV3-trf-002",
+      "sample": "EV3",
+      "source": "traffic",
+      "evidence_ref": "E-EV3-trf-01",
+      "data_type": "location",
+      "raw_observation": "同一位置参数出现在广告域名的请求连接中",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "ad.example-ad.com",
+      "transport": "https",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:06+08:00"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "case": "ev4-insecure-transport",
+  "description": "政策声明加密传输；行为事实观测到设备标识符明文 HTTP 上报 → 确定性规则命中 INSECURE_TRANSPORT。",
+  "app_category": "工具类",
+  "expect_findings": [
+    {"violation_type": "insecure_transport", "data_type": "device_id"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "case": "ev5-hallucination-gate",
+  "description": "防幻觉闸门评测：LLM 返回编造引证的声明必须被丢弃，不得进入研判；有效声明与一致行为不产生判定。",
+  "app_category": "工具类",
+  "expect_findings": [],
+  "gates": {
+    "min_raw_declarations": 2,
+    "expect_dropped_bad_quote": 1,
+    "max_accepted_declarations": 1
+  }
+}

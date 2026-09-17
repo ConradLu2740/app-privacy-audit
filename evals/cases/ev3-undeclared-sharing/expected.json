@@ -1,0 +1,8 @@
+{
+  "case": "ev3-undeclared-sharing",
+  "description": "政策声明位置仅共享给天气服务商；行为事实观测到位置同时发往未声明的广告域名 → 共享候选交语义判定。",
+  "app_category": "工具类",
+  "expect_findings": [
+    {"violation_type": "undeclared_sharing", "data_type": "location"}
+  ]
+}

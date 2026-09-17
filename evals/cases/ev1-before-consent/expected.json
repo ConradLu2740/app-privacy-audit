@@ -1,0 +1,8 @@
+{
+  "case": "ev1-before-consent",
+  "description": "政策声明同意后收集设备标识符；行为事实为同意前已观测收集（时序规则，纯确定性）。",
+  "app_category": "工具类",
+  "expect_findings": [
+    {"violation_type": "collect_before_consent", "data_type": "device_id"}
+  ]
+}

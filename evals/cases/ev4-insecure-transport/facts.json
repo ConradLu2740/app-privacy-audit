@@ -1,0 +1,20 @@
+{
+  "sample": "EV4",
+  "note": "评测用例：政策声明设备标识符经加密通道传输，行为事实观测到明文 HTTP 上报 → 期望命中 INSECURE_TRANSPORT。共享目标已声明，不应产生共享候选。",
+  "facts": [
+    {
+      "fact_id": "BF-EV4-trf-001",
+      "sample": "EV4",
+      "source": "traffic",
+      "evidence_ref": "E-EV4-trf-01",
+      "data_type": "device_id",
+      "raw_observation": "设备标识符经明文 HTTP 提交至统计日志域名",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "log.example.com",
+      "transport": "http",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:08+08:00"
+    }
+  ]
+}

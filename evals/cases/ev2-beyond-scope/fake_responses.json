@@ -1,0 +1,31 @@
+{
+  "_note": "EV2：第二条为语义判定（必要性）响应，key 取必要性提示词中的特征串。",
+  "用于展示本地天气和气象灾害预警服务": {
+    "declarations": [
+      {
+        "data_type": "location",
+        "purpose": "展示本地天气和气象灾害预警服务",
+        "collect_phase": "after_consent",
+        "shared_with": [],
+        "transport_protected": true,
+        "quote": "收集您的位置信息，用于展示本地天气和气象灾害预警服务"
+      }
+    ]
+  },
+  "不会收集您的通讯录信息": [
+    {
+      "data_type": "contacts",
+      "purpose": "声明不予收集",
+      "collect_phase": "unknown",
+      "shared_with": [],
+      "transport_protected": null,
+      "quote": "不会收集您的通讯录信息"
+    }
+  ],
+  "数据类别：installed_apps": {
+    "is_beyond_scope": true,
+    "is_necessary_for_core_function": false,
+    "confidence": "high",
+    "reason": "应用列表枚举与天气展示基本功能无直接关系，且政策未声明该数据类别。"
+  }
+}

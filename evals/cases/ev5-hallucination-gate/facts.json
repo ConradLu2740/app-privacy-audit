@@ -1,0 +1,18 @@
+{
+  "sample": "EV5",
+  "note": "评测用例（防幻觉闸门）：Fake LLM 对第二条政策条款返回编造引证（原文中不存在）→ 期望被闸门 1a 丢弃，不产生任何判定。",
+  "facts": [
+    {
+      "fact_id": "BF-EV5-dyn-001",
+      "sample": "EV5",
+      "source": "dynamic",
+      "evidence_ref": "E-EV5-dyn-01",
+      "data_type": "location",
+      "raw_observation": "定位请求发生在同意后，与政策声明一致",
+      "actor": "app",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:10+08:00"
+    }
+  ]
+}

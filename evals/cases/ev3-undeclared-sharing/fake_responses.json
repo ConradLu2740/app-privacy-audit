@@ -1,0 +1,20 @@
+{
+  "_note": "EV3：共享判定响应按目标域名给出 verdict；declared=false 的目标进入未声明共享 finding。",
+  "共享给天气数据服务商": {
+    "declarations": [
+      {
+        "data_type": "location",
+        "purpose": "提供准确的天气预报服务",
+        "collect_phase": "after_consent",
+        "shared_with": ["weather-service.example.com"],
+        "transport_protected": true,
+        "quote": "将您的位置信息共享给天气数据服务商，以提供准确的天气预报服务"
+      }
+    ]
+  },
+  "不会向任何第三方提供您的个人信息": [],
+  "ad.example-ad.com": {
+    "weather-service.example.com": {"declared": true, "matched_to": "weather-service.example.com", "reason": "政策明确声明的接收方。"},
+    "ad.example-ad.com": {"declared": false, "matched_to": "", "reason": "政策仅声明天气数据服务商，未声明该广告域名。"}
+  }
+}

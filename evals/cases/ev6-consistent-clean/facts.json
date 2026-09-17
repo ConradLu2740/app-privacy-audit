@@ -1,0 +1,46 @@
+{
+  "sample": "EV6",
+  "note": "评测用例（干净对照）：声明与行为完全一致、传输加密、共享目标已声明 → 期望零判定。",
+  "facts": [
+    {
+      "fact_id": "BF-EV6-dyn-001",
+      "sample": "EV6",
+      "source": "dynamic",
+      "evidence_ref": "E-EV6-dyn-01",
+      "data_type": "location",
+      "raw_observation": "定位请求发生在同意后，用于天气展示",
+      "actor": "app",
+      "phase": "after_consent",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:12+08:00"
+    },
+    {
+      "fact_id": "BF-EV6-trf-001",
+      "sample": "EV6",
+      "source": "traffic",
+      "evidence_ref": "E-EV6-trf-01",
+      "data_type": "location",
+      "raw_observation": "位置参数经 HTTPS 发往已声明的天气服务商",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "weather-service.example.com",
+      "transport": "https",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:13+08:00"
+    },
+    {
+      "fact_id": "BF-EV6-trf-002",
+      "sample": "EV6",
+      "source": "traffic",
+      "evidence_ref": "E-EV6-trf-01",
+      "data_type": "device_id",
+      "raw_observation": "设备标识符经 HTTPS 发往已声明的诊断域名",
+      "actor": "app",
+      "phase": "after_consent",
+      "destination": "diag.example.com",
+      "transport": "https",
+      "confidence": "observed",
+      "observed_at": "2026-09-17T21:00:14+08:00"
+    }
+  ]
+}

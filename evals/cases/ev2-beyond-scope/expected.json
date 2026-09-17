@@ -1,0 +1,8 @@
+{
+  "case": "ev2-beyond-scope",
+  "description": "政策仅声明位置与「不收通讯录」；行为事实观测到应用列表枚举 → 差集命中后交语义必要性判定。",
+  "app_category": "工具类",
+  "expect_findings": [
+    {"violation_type": "beyond_scope", "data_type": "installed_apps"}
+  ]
+}

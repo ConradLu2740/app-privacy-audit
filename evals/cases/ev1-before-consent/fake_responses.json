@@ -1,0 +1,16 @@
+{
+  "_note": "EV1：每条 key 需出现在对应调用的提示词中（抽取提示词含条款原文；语义判定提示词另含特征串）。",
+  "同意隐私政策之后收集设备标识符": {
+    "declarations": [
+      {
+        "data_type": "device_id",
+        "purpose": "统计服务稳定性与排查故障",
+        "collect_phase": "after_consent",
+        "shared_with": [],
+        "transport_protected": true,
+        "quote": "在您同意隐私政策之后收集设备标识符，用于统计服务稳定性与排查故障"
+      }
+    ]
+  },
+  "使用加密通道保护您的信息安全": []
+}

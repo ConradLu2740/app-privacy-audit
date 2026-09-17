@@ -57,7 +57,11 @@ python -m audit smoke
 
 ```bash
 python -m pytest tests/ -v     # 21 项测试，覆盖三条闸门与规则引擎
+python evals/run_eval.py       # 6 个评测用例：判定 P/R/F1 + 防幻觉闸门断言（离线可复现）
 ```
+
+评测集详见 [evals/README.md](../evals/README.md)：覆盖事前收集、超范围、未声明共享、明文传输、
+**幻觉引证闸门**与干净对照六类场景，`--live` 可切换真实 LLM 实测。
 
 ---
 

@@ -1,0 +1,27 @@
+{
+  "_note": "EV6：干净对照。两条声明覆盖全部事实类别，共享目标均已声明，传输加密。",
+  "用于展示本地天气和气象灾害预警服务": {
+    "declarations": [
+      {
+        "data_type": "location",
+        "purpose": "展示本地天气和气象灾害预警服务",
+        "collect_phase": "after_consent",
+        "shared_with": ["weather-service.example.com"],
+        "transport_protected": true,
+        "quote": "收集您的位置信息，用于展示本地天气和气象灾害预警服务"
+      }
+    ]
+  },
+  "设备标识符用于故障诊断": {
+    "declarations": [
+      {
+        "data_type": "device_id",
+        "purpose": "故障诊断",
+        "collect_phase": "after_consent",
+        "shared_with": ["diag.example.com"],
+        "transport_protected": true,
+        "quote": "收集设备标识符用于故障诊断，且仅在加密通道中传输数据"
+      }
+    ]
+  }
+}

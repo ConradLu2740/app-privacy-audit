@@ -63,11 +63,16 @@ class FakeProvider(LLMProvider):
             }
         )
 
-        # 1) 按 key 匹配：system 或最后一条 user 消息里出现的 key
+        # 1) 按 key 匹配：system 或最后一条 user 消息里出现的 key。
+        #    多个 key 同时命中时取最长 key，避免短 key（如政策引证片段）
+        #    抢占语义判定等更长特征的响应。
         haystack = (system or "") + "\n" + "\n".join(m.content for m in messages)
-        for key, value in self._by_key.items():
-            if key in haystack:
-                return self._render(value)
+        best_key = None
+        for key in self._by_key:
+            if key in haystack and (best_key is None or len(key) > len(best_key)):
+                best_key = key
+        if best_key is not None:
+            return self._render(self._by_key[best_key])
 
         # 2) 顺序出队
         if self._queue:
