@@ -70,7 +70,7 @@
 
 ✅ **通过**
 
-- README.md + README.zh-CN.md 均有：
+- README.md（中文，默认）+ README.en.md（EN）均有：
   - 问题（Why this repo exists + Problem space）
   - 方法图（mermaid: Architecture / Standard pipeline / Cross-checking）
   - 样本表（Samples (locked 2026-09-14)）

@@ -75,7 +75,7 @@
 
 - 已 `gh repo create` + push `master`
 - Topics：`android` `frida` `privacy` `security` `reverse-engineering` `mobile-security` `jadx` `appsec` `privacy-policy` `static-analysis`
-- 双语 README：`README.md`（EN）+ `README.zh-CN.md`（中文）
+- 双语 README：`README.md`（中文，默认）+ `README.en.md`（EN）
 
 ---
 
