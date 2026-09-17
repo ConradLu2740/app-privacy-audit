@@ -148,21 +148,23 @@ Hashes and channels: [docs/report/01-samples.md](docs/report/01-samples.md).
 
 | Sample | Static | Dynamic | Traffic | Policy map | One-liner |
 |--------|--------|---------|---------|------------|-----------|
-| A1 Moji | Done | **Blocked** (ARM-only + ijiami shell crashes on x86_64 AVD) | **Blocked** (app stuck at splash) | Done (static-only) | Large permission/SDK surface; OAID-heavy (323 files); runtime not verifiable in this lab |
+| A1 Moji | Done | **Blocked** (ARM-only + ijiami shell crashes on x86_64 AVD) | **Done** (60s after first launch: 535 conns / 74 hosts; third-party SDKs confirmed live; 50 plaintext HTTP) | Done (static-only) | Large permission/SDK surface; OAID-heavy (323 files); third-party SDKs verified on the wire; plaintext log endpoints |
 | A2 Douban | Done | **Blocked** (likely anti-Frida; process dies on attach — 网易易盾 NIS) | Done (own domains only, 60s window) | Done (static-only) | Own deviceId + clipboard-heavy code; commercial SDK signals but not triggered in 60s unlogged session |
 | A3 NewPipe | Done | **Done** | **Done** (only `www.youtube.com`) | **Done** | Minimal permissions; no ID/location hits in 30s playbook; aligns with GDPR policy |
 
-### Top findings (5)
+### Top findings
 
 | ID | Sample | Level | Title | Evidence |
 |----|--------|-------|-------|----------|
 | F-01 | A1 | 中 | 后台定位 + 后台静默收集设备信息，政策已披露但风险面广 | E-A1-sta-01 · E-A1-pol-01 (C-05-m) |
 | F-02 | A1 | 中 | OAID/设备标识体系庞大（323 文件命中），多家第三方 SDK 未单独点名 | E-A1-sta-01 · E-A1-pol-01 (R-13) |
+| F-04 | A1 | 中 | 第三方 SDK（京东/GDT/穿山甲/高德/百度/个推/友盟）首启 60s 全部观测联网，政策未单独点名 | E-A1-trf-02 · E-A1-pol-01 (R-13) |
 | F-05 | A2 | 低 | `QUERY_ALL_PACKAGES` 已披露但范围限于「跳转唤起」 | E-A2-sta-01 · E-A2-pol-01 (R-21) |
 | F-06 | A2 | 低 | 剪贴板「仅本地识别，不上传」声明，需动态验证 | E-A2-sta-01 · E-A2-pol-01 (R-22) |
 | F-09 | A3 | 无 | 权限面极窄 + 流量仅 YouTube 官方域名，与 GDPR 政策一致 | E-A3-sta-01 · E-A3-dyn-02 · E-A3-trf-01 |
+| F-10 | A1 | 中 | 50 条明文 HTTP 集中于自有日志端点（`v1.log.moji.com` 等），存在嗅探/篡改面 | E-A1-trf-02 |
 
-Full risk table (F-01…F-09) and remediation: [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md).
+Full risk table (F-01…F-10) and remediation: [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md).
 
 Sample pipeline:
 
