@@ -6,6 +6,7 @@
 > Every claim carries an evidence ID; every blocker is documented; zero invented statutes.
 
 [![status](https://img.shields.io/badge/status-active-success)](https://github.com/ConradLu2740/app-privacy-audit)
+[![ci](https://github.com/ConradLu2740/app-privacy-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/ConradLu2740/app-privacy-audit/actions/workflows/ci.yml)
 [![frida](https://img.shields.io/badge/frida-17.18.0-blue)](https://frida.re)
 [![android](https://img.shields.io/badge/Android-11%20(API%2030)-3DDC84)](https://developer.android.com)
 [![license](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
