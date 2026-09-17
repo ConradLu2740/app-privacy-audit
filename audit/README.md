@@ -13,15 +13,25 @@
 
 ```mermaid
 flowchart LR
-  P["隐私政策文本"] --> PE["LLM 抽取<br/>结构化声明"]
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef det fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef llm fill:#FFEBEE,stroke:#C62828,color:#B71C1C,stroke-dasharray:5 3;
+  classDef out fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+
+  P["隐私政策文本"] --> PE["🔒 LLM 抽取<br/>结构化声明"]
   BF["行为事实<br/>静态/动态/流量"] --> RL["规则引擎<br/>确定性判定"]
   PE --> RL
-  PE --> SV["LLM 语义判定"]
+  PE --> SV["🔒 LLM 语义判定"]
   BF --> SV
   RL --> F["违规判定"]
   SV --> F
-  REG["本地法规条文库"] -->|"检索命中条号"| F
+  REG["本地法规条文库"] -->|检索命中条号| F
   F --> RPT["检测报告"]
+
+  class P,BF input;
+  class PE,SV llm;
+  class RL,REG det;
+  class F,RPT out;
 ```
 
 ---

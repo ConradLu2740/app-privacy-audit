@@ -34,14 +34,19 @@
 
 ```mermaid
 flowchart TB
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef llm fill:#FFEBEE,stroke:#C62828,color:#B71C1C,stroke-dasharray:5 3;
+  classDef det fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef out fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+
   subgraph Input["输入"]
     P["隐私政策文本<br/>官网 / 应用内"]
     BF["行为事实库<br/>静态 + 动态 + 流量"]
   end
 
-  subgraph Extract["LLM 环节（语义）"]
-    PE["政策声明抽取<br/>PolicyExtractor"]
-    SV["语义对齐判定<br/>SemanticJudge"]
+  subgraph Extract["LLM 环节（语义 · 三道闸门管制）"]
+    PE["🔒 政策声明抽取<br/>PolicyExtractor"]
+    SV["🔒 语义对齐判定<br/>SemanticJudge"]
   end
 
   subgraph Deterministic["确定性环节（无 LLM）"]
@@ -63,6 +68,11 @@ flowchart TB
   SV -->|"语义判定"| F
   REG -->|"检索命中条号"| F
   F --> RPT
+
+  class P,BF input;
+  class PE,SV llm;
+  class RL,REG det;
+  class F,RPT out;
 ```
 
 ### 2.1 核心设计决策：规则优先 + LLM 兜底

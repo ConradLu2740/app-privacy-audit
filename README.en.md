@@ -46,16 +46,29 @@ Origin: enterprise challenge brief from the 9th Zhejiang Provincial College Stud
 
 ```mermaid
 flowchart LR
-  P["Policy text"] --> PE["LLM extraction<br/>structured declarations"]
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef det fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef llm fill:#FFEBEE,stroke:#C62828,color:#B71C1C,stroke-dasharray:5 3;
+  classDef out fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+
+  P["Policy text"] --> PE["🔒 LLM extraction<br/>structured declarations"]
   BF["Behavior facts<br/>static/dynamic/traffic"] --> RL["Rule engine<br/>deterministic verdicts"]
   PE --> RL
-  PE --> SV["LLM semantic judgment"]
+  PE --> SV["🔒 LLM semantic judgment"]
   BF --> SV
   RL --> F["Findings"]
   SV --> F
   REG["Local statute library"] -->|article lookup| F
   F --> RPT["Report"]
+
+  class P,BF input;
+  class PE,SV llm;
+  class RL,REG det;
+  class F,RPT out;
 ```
+
+> 🔒 Red dashed nodes = LLM stages governed by the three anti-hallucination gates:
+> declarations must carry verbatim quotes; article numbers and violation types come only from local deterministic stages.
 
 The obvious question: what about LLM hallucination? The engine answers with three gates — **the LLM only does semantic understanding; it can never produce facts or statutes**:
 
@@ -80,10 +93,39 @@ Details: [audit/README.md](audit/README.md) · Design: [docs/design/llm-complian
 
 ## Method: how the three lines cross-check
 
+First, what each line **can and cannot prove** — this is the evidence discipline of the whole repo:
+
+```mermaid
+flowchart LR
+  classDef line fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef can fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef cannot fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+
+  subgraph proof["Can prove / cannot prove"]
+    direction TB
+    S["Static"] --> S1["Call sites / permissions / SDKs"]
+    S --> S2["Cannot prove it runs at runtime"]
+    D["Dynamic"] --> D1["Actually invoked at runtime"]
+    D --> D2["Cannot prove it reached a server"]
+    T["Traffic"] --> T1["Fields and destinations on the wire"]
+    T --> T2["Cannot prove no local plaintext copy"]
+  end
+
+  class S,D,T line;
+  class S1,D1,T1 can;
+  class S2,D2,T2 cannot;
+```
+
 ### Architecture
 
 ```mermaid
 flowchart TB
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef dyn fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef trf fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef out fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C;
+
   subgraph Input["Sample & lab"]
     APK["APK / package / SHA-256"]
     EMU["Emulator or device<br/>Android 9–11"]
@@ -96,7 +138,7 @@ flowchart TB
     TF["Traffic<br/>mitmproxy / PCAPdroid"]
   end
 
-  subgraph Out["Outputs"]
+  subgraph O["Outputs"]
     H["Hypotheses H-xx"]
     E["Evidence E-xx-sta/dyn/trf"]
     C["Policy clauses C-xx"]
@@ -115,12 +157,25 @@ flowchart TB
   C --> R
   E --> R
   R --> FIX
+
+  class APK,EMU,FR,H,C input;
+  class ST stat;
+  class DY dyn;
+  class TF trf;
+  class E,R,FIX out;
 ```
 
 ### Pipeline
 
 ```mermaid
 flowchart LR
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef dyn fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef trf fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef blocked fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+  classDef pol fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C;
+
   A["Lock sample"] --> B["Static scan<br/>S-*"]
   B --> C["Hypotheses H-xx"]
   C --> D{"Dynamic inject"}
@@ -131,18 +186,35 @@ flowchart LR
   G --> H["Policy C-xx"]
   H --> I["Map R-xx"]
   I --> J["Report 00–06"]
+
+  class A,C input;
+  class B stat;
+  class E dyn;
+  class F blocked;
+  class G trf;
+  class H,I,J pol;
 ```
 
 ### Confidence levels
 
 ```mermaid
 flowchart TD
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef ok fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef mid fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef no fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+
   S["Static hit"] --> Q{"Seen at runtime?"}
   Q -->|Yes| T{"Traffic aligned?"}
   Q -->|No| U["Record not-observed<br/>or path not hit"]
   T -->|Yes| V["Highest confidence<br/>feature in report"]
   T -->|No / not tested| W["Medium confidence<br/>state limits"]
   U --> X["Cannot alone claim violation"]
+
+  class S stat;
+  class V ok;
+  class Q,T,U,W mid;
+  class X no;
 ```
 
 Ground rules:
@@ -181,6 +253,10 @@ Hashes and channels: [docs/report/01-samples.md](docs/report/01-samples.md). **A
 | A3 NewPipe | ✅ | ✅ Alive through the 30s playbook, zero business hits | ✅ Only `www.youtube.com` | ✅ | Minimal permissions; behavior matches the GDPR policy — the textbook control |
 
 About those two "blocked" cells: A1 is an ABI mismatch plus the ijiami packer; A2 is anti-injection. In the same lab, NewPipe and a calculator app hook fine — so it is the samples' defenses, not the scripts. Most reports quietly skip these failures; here they are on record.
+
+![Figure 1 · Moji Weather traffic profile, first 60s after launch](assets/diagrams/a1-traffic-overview.png)
+
+*Figure 1: connection distribution by vendor. Ad SDKs (red) total 159 connections, 45% of all traffic; "Moji-owned" includes 50 plaintext HTTP log endpoints (F-10). Source: E-A1-trf-02.*
 
 ### Top findings
 

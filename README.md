@@ -45,16 +45,29 @@
 
 ```mermaid
 flowchart LR
-  P["隐私政策文本"] --> PE["LLM 抽取<br/>结构化声明"]
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef det fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef llm fill:#FFEBEE,stroke:#C62828,color:#B71C1C,stroke-dasharray:5 3;
+  classDef out fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+
+  P["隐私政策文本"] --> PE["🔒 LLM 抽取<br/>结构化声明"]
   BF["行为事实<br/>静态/动态/流量"] --> RL["规则引擎<br/>确定性判定"]
   PE --> RL
-  PE --> SV["LLM 语义判定"]
+  PE --> SV["🔒 LLM 语义判定"]
   BF --> SV
   RL --> F["违规判定"]
   SV --> F
   REG["本地法规条文库"] -->|检索命中条号| F
   F --> RPT["检测报告"]
+
+  class P,BF input;
+  class PE,SV llm;
+  class RL,REG det;
+  class F,RPT out;
 ```
+
+> 🔒 红色虚线节点 = 三道防幻觉闸门管制的 LLM 环节：只产出带原文引证的声明，
+> 条号与违规类型全部由本地确定性环节给出。
 
 用 LLM 做合规分析，最大的质疑是幻觉。所以引擎加了三道闸门——**LLM 只负责理解语义，永远碰不到事实和法条的生成**：
 
@@ -80,10 +93,39 @@ python evals/run_eval.py     # 6 个评测用例：判定 P/R/F1 + 防幻觉断�
 
 ## 方法：三线怎么交叉
 
+先声明每条线**能证明什么、不能证明什么**——这是全仓库的证据纪律：
+
+```mermaid
+flowchart LR
+  classDef line fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef can fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef cannot fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+
+  subgraph proof["能证明 / 不能证明"]
+    direction TB
+    S["静态"] --> S1["有调用点 / 权限 / SDK"]
+    S --> S2["不能证明运行时必执行"]
+    D["动态"] --> D1["运行时确实调用了"]
+    D --> D2["不能证明已上传服务端"]
+    T["流量"] --> T1["出网字段与目的地"]
+    T --> T2["不能证明本地是否已明文落盘"]
+  end
+
+  class S,D,T line;
+  class S1,D1,T1 can;
+  class S2,D2,T2 cannot;
+```
+
 ### 架构
 
 ```mermaid
 flowchart TB
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef dyn fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef trf fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef out fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C;
+
   subgraph Input["样本与环境"]
     APK["APK / 包名 / SHA-256"]
     EMU["模拟器或真机<br/>Android 9–11"]
@@ -96,7 +138,7 @@ flowchart TB
     TF["流量 Traffic<br/>mitmproxy / PCAPdroid"]
   end
 
-  subgraph Out["产出"]
+  subgraph O["产出"]
     H["假设 H-xx"]
     E["证据 E-xx-sta/dyn/trf"]
     C["政策条款 C-xx"]
@@ -115,12 +157,25 @@ flowchart TB
   C --> R
   E --> R
   R --> FIX
+
+  class APK,EMU,FR,H,C input;
+  class ST stat;
+  class DY dyn;
+  class TF trf;
+  class E,R,FIX out;
 ```
 
 ### 流程
 
 ```mermaid
 flowchart LR
+  classDef input fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef dyn fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef trf fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef blocked fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+  classDef pol fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C;
+
   A["锁定样本"] --> B["静态扫描<br/>S-*"]
   B --> C["假设 H-xx"]
   C --> D{"动态注入"}
@@ -131,18 +186,35 @@ flowchart LR
   G --> H["政策 C-xx"]
   H --> I["三列对照 R-xx"]
   I --> J["报告 00–06"]
+
+  class A,C input;
+  class B stat;
+  class E dyn;
+  class F blocked;
+  class G trf;
+  class H,I,J pol;
 ```
 
 ### 置信度怎么定
 
 ```mermaid
 flowchart TD
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef ok fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef mid fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef no fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+
   S["静态命中"] --> Q{"动态是否观测到？"}
   Q -->|是| T{"流量是否对齐？"}
   Q -->|否| U["记「未观测到」<br/>或路径未触发"]
   T -->|是| V["最高置信<br/>优先写入报告"]
   T -->|否/未测| W["中等置信<br/>写清局限"]
   U --> X["不可单独定「违规」"]
+
+  class S stat;
+  class V ok;
+  class Q,T,U,W mid;
+  class X no;
 ```
 
 几条铁律：
@@ -182,6 +254,10 @@ flowchart TD
 | A3 NewPipe | ✅ | ✅ 30s 剧本全程存活，零业务命中 | ✅ 只连 `www.youtube.com` | ✅ | 权限极少，行为和 GDPR 政策对得上——教科书级的对照组 |
 
 「受阻」那一列值得说两句：A1 是 ABI 不兼容 + 爱加密壳，A2 是反注入。同环境下 NewPipe 和一个计算器 App 都能正常 Hook，所以是样本的问题，不是脚本的问题。这类失败在大多数报告里会被悄悄略过，这里全部留档。
+
+![图 1 · 墨迹天气首启后 60 秒流量画像](assets/diagrams/a1-traffic-overview.png)
+
+*图 1：墨迹天气首启后 60 秒的连接分布。广告类 SDK（红）合计 159 条连接，占全部连接的 45%；「墨迹自有」中含 50 条明文 HTTP 日志端点（F-10）。数据来源 E-A1-trf-02。*
 
 ### 主要发现
 

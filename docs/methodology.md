@@ -21,6 +21,10 @@
 
 ```mermaid
 flowchart LR
+  classDef line fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef can fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef cannot fill:#FFF8E1,stroke:#F9A825,color:#B26A00,stroke-dasharray:4 3;
+
   subgraph proof["能证明 / 不能证明"]
     direction TB
     S["静态"] --> S1["有调用点 / 权限 / SDK"]
@@ -30,7 +34,13 @@ flowchart LR
     T["流量"] --> T1["出网字段与目的地"]
     T --> T2["不能证明本地是否已明文落盘"]
   end
+
+  class S,D,T line;
+  class S1,D1,T1 can;
+  class S2,D2,T2 cannot;
 ```
+
+> 同一张图也用于 [README](../README.md) 方法一节——「能证明 / 不能证明」是全仓库的证据纪律。
 
 **交叉验证：**
 
@@ -40,11 +50,19 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-  A["静态有"] --> B["动态有?"]
+  classDef stat fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef ok fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef mid fill:#ECEFF1,stroke:#546E7A,color:#263238;
+
+  A["静态有"] --> B{"动态有?"}
   B -->|否| C["未观测到 / 死代码 / 未触发"]
-  B -->|是| D["流量对齐?"]
+  B -->|是| D{"流量对齐?"}
   D -->|否| E["本地处理或加密后传"]
   D -->|是| F["最高置信证据"]
+
+  class A stat;
+  class F ok;
+  class B,C,D,E mid;
 ```
 
 证据编号规则见 [evidence/README.md](../evidence/README.md)。
@@ -53,12 +71,25 @@ flowchart TD
 
 ```mermaid
 flowchart TD
+  classDef s1 fill:#ECEFF1,stroke:#546E7A,color:#263238;
+  classDef s2 fill:#E3F2FD,stroke:#1565C0,color:#0D47A1;
+  classDef s3 fill:#E8F5E9,stroke:#2E7D32,color:#1B5E20;
+  classDef s4 fill:#FFF3E0,stroke:#EF6C00,color:#E65100;
+  classDef s5 fill:#F3E5F5,stroke:#6A1B9A,color:#4A148C;
+
   P1["1 锁定包名/版本/哈希"] --> P2["2 静态 S-* → 假设 H-xx"]
   P2 --> P3["3 动态验证 → E-dyn"]
   P3 --> P4["4 流量对齐 → E-trf"]
   P4 --> P5["5 政策拆解 C-xx"]
   P5 --> P6["6 三列对照 → 风险 → 修复"]
   P6 --> P7["7 写入 docs/report/"]
+
+  class P1 s1;
+  class P2 s2;
+  class P3 s3;
+  class P4 s4;
+  class P5,P6 s5;
+  class P7 s1;
 ```
 
 （纯文本版：锁定 → 静态 → 假设 → 动态 → 流量 → 政策 → 对照 → 报告）
