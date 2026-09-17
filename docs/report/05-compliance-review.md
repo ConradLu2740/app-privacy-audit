@@ -89,7 +89,7 @@
 | Manifest 权限 | 定位 + 后台定位 + 活动识别 + 相机 + `PACKAGE_USAGE_STATS`（maxSdk 28）+ OAID 厂商簇 | E-A1-sta-01 |
 | 静态 SDK | 友盟、个推、穿山甲、高德、百度、腾讯 等；OAID 323 文件命中 | E-A1-sta-01 |
 | 动态 Hook | **受阻**（壳杀进程 + 真机无 root） | E-A1-dyn-01/02 |
-| 流量 | **受阻**（App 卡 splash） | E-A1-trf-01 |
+| 流量 | **完成**（首启 60s：535 连接 / 74 主机 / 50 明文 HTTP，见 E-A1-trf-02） | E-A1-trf-01 · E-A1-trf-02 |
 
 ### 三列对照（R-xx）
 

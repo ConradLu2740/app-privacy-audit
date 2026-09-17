@@ -92,12 +92,12 @@
 
 | ID | 检查项 | A1 状态 | A1 证据 | A2 状态 | A2 证据 | A3 状态 | A3 证据 |
 |----|--------|---------|---------|---------|---------|---------|---------|
-| T-01 | 纯 HTTP 明文请求 | **受阻**（App 卡 splash） | E-A1-trf-01 | 仅观察连接级；无明文 HTTP 命中（仅 TLS） | E-A2-trf-01 | 仅 `www.youtube.com`（TLS/DNS） | E-A3-trf-01 |
-| T-02 | HTTPS 体中敏感字段 | 未解（无 root + 用户 CA 不被信任） | E-A1-trf-01 | 未解 | E-A2-trf-01 | 未解 | E-A3-trf-01 |
-| T-03 | 敏感字段是否与政策一致 | 未做 | E-A1-trf-01 | 「自有域名」与「安全运行」一致 | E-A2-trf-01 · E-A2-pol-01 | 「仅 YouTube 官方」与 GDPR 政策一致 | E-A3-trf-01 · E-A3-pol-01 |
-| T-04 | 是否向非政策列出的第三方域名发送 | 未做 | E-A1-trf-01 | **未观测到第三方域名**（60s 未登录） | E-A2-trf-01 | **未观测到第三方追踪域名** | E-A3-trf-01 |
-| T-05 | 证书校验/固定 | 未做 | E-A1-trf-01 | 未做（连接级元数据） | E-A2-trf-01 | 未做 | E-A3-trf-01 |
-| T-06 | 本地明文落盘后再上传 | 未做 | E-A1-trf-01 | 未做 | E-A2-trf-01 | 未做 | E-A3-trf-01 |
+| T-01 | 纯 HTTP 明文请求 | **命中**：50 条明文 HTTP，多为自有日志/CDN 端点（`v1.log.moji.com` 等）及 `voiceads.cn`、穿山甲打包域名 | E-A1-trf-02 | 仅观察连接级；无明文 HTTP 命中（仅 TLS） | E-A2-trf-01 | 仅 `www.youtube.com`（TLS/DNS） | E-A3-trf-01 |
+| T-02 | HTTPS 体中敏感字段 | 未解（无 root + 用户 CA 不被信任） | E-A1-trf-02 | 未解 | E-A2-trf-01 | 未解 | E-A3-trf-01 |
+| T-03 | 敏感字段是否与政策一致 | 部分：第三方 SDK 已观测联网（京东/GDT/穿山甲/高德/百度/个推/友盟），与政策第三方清单核对待细做 | E-A1-trf-02 · E-A1-pol-01 | 「自有域名」与「安全运行」一致 | E-A2-trf-01 · E-A2-pol-01 | 「仅 YouTube 官方」与 GDPR 政策一致 | E-A3-trf-01 · E-A3-pol-01 |
+| T-04 | 是否向非政策列出的第三方域名发送 | **观测到大量第三方域名**（约 45% 连接，见 E-A1-trf-02 §3 分组表） | E-A1-trf-02 | **未观测到第三方域名**（60s 未登录） | E-A2-trf-01 | **未观测到第三方追踪域名** | E-A3-trf-01 |
+| T-05 | 证书校验/固定 | 未做（连接级元数据） | E-A1-trf-02 | 未做（连接级元数据） | E-A2-trf-01 | 未做 | E-A3-trf-01 |
+| T-06 | 本地明文落盘后再上传 | 未做 | E-A1-trf-02 | 未做 | E-A2-trf-01 | 未做 | E-A3-trf-01 |
 
 **流量产出：** 过滤条件（host/关键字）+ 脱敏摘录，**不要提交原始 PCAP**。
 
@@ -141,7 +141,7 @@
 | S-* 静态 | 完成（E-A1-sta-01） | 完成（E-A2-sta-01） | 完成（E-A3-sta-01） |
 | 假设 H-xx | 已建（H-01…H-06） | 已建（H-10…H-15） | 低采集基线 |
 | D-* 动态 Hook | **受阻**（ARM-only + ijiami 壳） | **受阻**（网易易盾 NIS 反注入） | **完成**（E-A3-dyn-01/02，均未观测到） |
-| T-* 流量 | **受阻**（首启卡 splash） | **完成**（E-A2-trf-01，60s 仅自有域名） | **完成**（E-A3-trf-01，仅 `www.youtube.com`） |
+| T-* 流量 | **完成**（E-A1-trf-02，首启 60s 观测到 535 连接 / 74 主机，含 50 条明文 HTTP 与大量第三方 SDK 域名） | **完成**（E-A2-trf-01，60s 仅自有域名） | **完成**（E-A3-trf-01，仅 `www.youtube.com`） |
 | C-* 政策对照 | **完成**（E-A1-pol-01，14 条 C-xx-m，仅静态层） | **完成**（E-A2-pol-01，三附件齐全，仅静态层） | **完成**（E-A3-pol-01，三线闭环） |
 
 详细静态结论见 [../docs/report/02-static-analysis.md](../docs/report/02-static-analysis.md)；合规对照见 [../docs/report/05-compliance-review.md](../docs/report/05-compliance-review.md)；结论与修复建议见 [../docs/report/06-findings-and-fixes.md](../docs/report/06-findings-and-fixes.md)。
