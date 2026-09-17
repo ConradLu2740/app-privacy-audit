@@ -21,7 +21,7 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
-      - name: Run unit tests (21 tests: gates + rule engine)
+      - name: "Run unit tests (21 tests: gates + rule engine)"
         run: python -m pytest tests/ -v
 
       - name: Run engine eval set (6 cases, P/R/F1 + gate assertions)
