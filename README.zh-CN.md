@@ -31,7 +31,7 @@
 |------|------------------|
 | 安全 / 隐私方向学生 | 一套可抄的检测流程 + 证据编号规范 |
 | 想做作品集的开发者 | 真实样本、真实受阻、可讲的故事 |
-| 想复现分析的同行 | 环境步骤、脚本、清单、报告骨架 |
+| 想复现分析的同行 | 环境步骤、脚本、清单、报告完整稿 |
 
 ---
 
@@ -188,11 +188,23 @@ APK **不会**进仓库，请自行从官方渠道下载。
 
 ## 结果摘要（诚实版）
 
-| 样本 | 静态 | 动态 | 政策对照 | 结论一句话 |
-|------|------|------|----------|------------|
-| A1 墨迹 | 完成 | **受阻**（仅 ARM + 爱加密壳在 x86_64 AVD 崩溃） | 未做 | 权限/SDK 面很大，运行时无法在本环境证实 |
-| A2 豆瓣 | 完成 | **受阻**（疑似反 Frida，attach 后进程死） | 未做 | 有自研 deviceId 与较多剪贴板代码，需更弱对抗环境 |
-| A3 NewPipe | 完成 | **完成** | **完成** | 权限极少；30s 剧本内未观测到标识符/定位；与政策一致 |
+| 样本 | 静态 | 动态 | 流量 | 政策对照 | 结论一句话 |
+|------|------|------|------|----------|------------|
+| A1 墨迹 | 完成 | **受阻**（仅 ARM + 爱加密壳在 x86_64 AVD 崩溃） | **受阻**（App 卡 splash） | 完成（仅静态层） | 权限/SDK 面很大；OAID 体系庞大（323 文件）；本环境无法证实运行时 |
+| A2 豆瓣 | 完成 | **受阻**（疑似反 Frida，attach 后进程死 — 网易易盾 NIS） | 完成（仅自有域名，60s 窗口） | 完成（仅静态层） | 有自研 deviceId 与较多剪贴板代码；商业 SDK 信号但 60s 未登录未触发 |
+| A3 NewPipe | 完成 | **完成** | **完成**（仅 `www.youtube.com`） | **完成** | 权限极少；30s 剧本内未观测到标识符/定位；与 GDPR 政策一致 |
+
+### 主要发现（5 条）
+
+| ID | 样本 | 级别 | 标题 | 证据 |
+|----|------|------|------|------|
+| F-01 | A1 | 中 | 后台定位 + 后台静默收集设备信息，政策已披露但风险面广 | E-A1-sta-01 · E-A1-pol-01 (C-05-m) |
+| F-02 | A1 | 中 | OAID/设备标识体系庞大（323 文件命中），多家第三方 SDK 未单独点名 | E-A1-sta-01 · E-A1-pol-01 (R-13) |
+| F-05 | A2 | 低 | `QUERY_ALL_PACKAGES` 已披露但范围限于「跳转唤起」 | E-A2-sta-01 · E-A2-pol-01 (R-21) |
+| F-06 | A2 | 低 | 剪贴板「仅本地识别，不上传」声明，需动态验证 | E-A2-sta-01 · E-A2-pol-01 (R-22) |
+| F-09 | A3 | 无 | 权限面极窄 + 流量仅 YouTube 官方域名，与 GDPR 政策一致 | E-A3-sta-01 · E-A3-dyn-02 · E-A3-trf-01 |
+
+完整风险表（F-01…F-09）与修复建议：[docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md)。
 
 样本推进状态：
 
@@ -232,9 +244,9 @@ stateDiagram-v2
 | 样本 | [docs/report/01-samples.md](docs/report/01-samples.md) |
 | 静态 | [docs/report/02-static-analysis.md](docs/report/02-static-analysis.md) |
 | 动态 | [docs/report/03-dynamic-analysis.md](docs/report/03-dynamic-analysis.md) |
-| 流量 | [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md)（骨架） |
+| 流量 | [docs/report/04-traffic-analysis.md](docs/report/04-traffic-analysis.md) |
 | 合规 | [docs/report/05-compliance-review.md](docs/report/05-compliance-review.md) |
-| 结论 | [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md)（骨架） |
+| 结论 | [docs/report/06-findings-and-fixes.md](docs/report/06-findings-and-fixes.md) |
 
 ---
 
