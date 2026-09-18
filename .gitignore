@@ -43,3 +43,4 @@ config.yml
 # Pipeline run artifacts
 out/
 .proma-models.json
+generated-images/
